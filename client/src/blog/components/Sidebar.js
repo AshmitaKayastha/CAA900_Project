@@ -73,19 +73,19 @@ class Sidebar extends Component {
         postImage: "sidebar-blog-1.jpg",
         postTitle: "Making Sense of React Hooks?",
         postLink: "blog-details-left-sidebar",
-        postDate: "30 October 2019"
+        postDate: "4 June 2025"
       },
       {
         postImage: "sidebar-blog-2.jpg",
         postTitle: "Set Up Medium Feed in React",
         postLink: "blog-details-left-sidebar",
-        postDate: "30 October 2019"
+        postDate: "4 June 2025"
       },
       {
         postImage: "sidebar-blog-3.jpg",
         postTitle: "Five Things I Didn’t Know About Create-React-App",
         postLink: "blog-details-left-sidebar",
-        postDate: "30 October 2019"
+        postDate: "4 June 2025"
       }
     ];
 

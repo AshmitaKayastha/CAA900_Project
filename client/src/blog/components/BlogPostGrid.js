@@ -6,7 +6,7 @@ class BlogPostGrid extends Component {
       {
         postLink: "blog-details-left-sidebar",
         postImg: "1.jpg",
-        postDate: "AUGUST 4, 2019",
+        postDate: "June 4, 2025",
         postTitle: "Vue JS 2 - The Complete Guide (incl. Vue Router & Vuex)",
         postExcerpt:
           "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe minus, illo error ratione eos ex…"
@@ -14,7 +14,7 @@ class BlogPostGrid extends Component {
       {
         postLink: "blog-details-left-sidebar",
         postImg: "2.jpg",
-        postDate: "AUGUST 4, 2019",
+        postDate: "June 4, 2025",
         postTitle: "Build Responsive Real World Websites with HTML5 and CSS3",
         postExcerpt:
           "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe minus, illo error ratione eos ex…"
@@ -22,7 +22,7 @@ class BlogPostGrid extends Component {
       {
         postLink: "blog-details-left-sidebar",
         postImg: "3.jpg",
-        postDate: "AUGUST 4, 2019",
+        postDate: "June 4, 2025",
         postTitle: "The Complete Web Developer in 2019: Zero to Mastery",
         postExcerpt:
           "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe minus, illo error ratione eos ex…"
@@ -30,7 +30,7 @@ class BlogPostGrid extends Component {
       {
         postLink: "blog-details-left-sidebar",
         postImg: "1.jpg",
-        postDate: "AUGUST 4, 2019",
+        postDate: "June 4, 2025",
         postTitle: "Python and Django Full Stack Web Developer Bootcamp",
         postExcerpt:
           "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe minus, illo error ratione eos ex…"
@@ -38,7 +38,7 @@ class BlogPostGrid extends Component {
       {
         postLink: "blog-details-left-sidebar",
         postImg: "2.jpg",
-        postDate: "AUGUST 4, 2019",
+        postDate: "June 4, 2025",
         postTitle: "Advanced CSS and Sass: Flexbox, Grid, Animations and More!",
         postExcerpt:
           "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe minus, illo error ratione eos ex…"
@@ -46,7 +46,7 @@ class BlogPostGrid extends Component {
       {
         postLink: "blog-details-left-sidebar",
         postImg: "3.jpg",
-        postDate: "AUGUST 4, 2019",
+        postDate: "June 4, 2025",
         postTitle: "The Complete React Developer Course (w/ Hooks and Redux)",
         postExcerpt:
           "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe minus, illo error ratione eos ex…"

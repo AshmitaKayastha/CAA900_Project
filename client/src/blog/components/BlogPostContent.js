@@ -2,8 +2,6 @@ import React, { Component } from "react";
 
 class BlogPostContent extends Component {
   render() {
-    /* post tag */
-
     let tagData = [
       { tagLink: "blog-left-sidebar", tagName: "Web Development" },
       { tagLink: "blog-left-sidebar", tagName: "Mobile Apps" },
@@ -33,7 +31,7 @@ class BlogPostContent extends Component {
                   <li>
                     By <a href="blog-left-sidebar">admin</a>
                   </li>
-                  <li>30 October 2019</li>
+                  <li>June 13 2025</li>
                   <li>
                     <a href="/">3 Comment</a>
                   </li>
@@ -43,43 +41,22 @@ class BlogPostContent extends Component {
                 </h2>
                 <div className="desc section-space--bottom--30">
                   <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Impedit eveniet reprehenderit voluptas delectus reiciendis
-                    pariatur, totam id quae tempore fugiat tenetur asperiores
-                    saepe velit nisi voluptates molestiae quia fugit laboriosam
-                    quidem, distinctio dolor consequatur repellendus debitis
-                    natus magni. Totam atque provident nulla quasi voluptatum
-                    nostrum officia rerum pariatur maxime sit.
+                    Python is one of the most versatile and beginner-friendly programming languages. It’s used in web development, data analysis, artificial intelligence, machine learning, and more. The language emphasizes readability, allowing new developers to pick it up quickly.
                   </p>
                   <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Iste iure eveniet minima commodi consequuntur veritatis,
-                    officiis quibusdam molestias, nemo dolorum veniam quisquam
-                    pariatur facilis repudiandae eaque quas assumenda enim, unde
-                    placeat dolores id voluptatibus amet.
+                    This bootcamp covers everything from the basics of Python syntax to advanced topics like decorators, generators, and working with APIs. Whether you’re new to coding or looking to add Python to your skill set, this course is a great place to start.
                   </p>
                   <blockquote className="blockquote section-space--bottom--30 section-space--top--30">
                     <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                      Cupiditate ad totam est optio mollitia dolores rem
-                      ducimus. Odio assumenda distinctio adipisci! Consequuntur
-                      excepturi eos nulla.
+                      “Python’s simplicity and wide adoption make it the ideal language for rapid development and innovation.”
                     </p>
                     <span className="author">__Denise Miller</span>
                   </blockquote>
                   <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Ipsam explicabo iusto suscipit dolore repellendus odit
-                    laborum, cupiditate unde nesciunt eveniet temporibus autem
-                    adipisci earum at error aspernatur neque minima doloribus?
+                    Students will build real-world projects including a calculator, web scraper, and even a Django-based web app. These hands-on experiences reinforce your understanding and prepare you for real job scenarios.
                   </p>
                   <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Reiciendis voluptate repellat quam exercitationem excepturi
-                    enim et blanditiis amet minima itaque, doloribus cumque
-                    labore. Asperiores nemo odio sed molestias harum laborum
-                    quia enim, delectus repellendus consequuntur unde magnam,
-                    ipsam possimus vero, quam dolore adipisci. Rerum, vitae!
+                    By the end of this bootcamp, you’ll be confident in writing clean Python code, understanding data structures, and using Python libraries like NumPy, Pandas, and Flask. Start your journey toward becoming a Python developer today.
                   </p>
                 </div>
                 <ul className="tags">

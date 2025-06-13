@@ -1,21 +1,9 @@
-/**======================================================================
-=========================================================================
-Template Name: Elite Able Admin Template
-Author: Codedthemes
-supports: https://phoenixcoded.ticksy.com
-File: style.css
-=========================================================================
-=================================================================================== */
-/**  =====================
-     Google Font
-==========================  **/
+
 @import url("https://fonts.googleapis.com/css?family=Mada:400,500,600");
 @import url("../plugins/bootstrap/css/bootstrap.min.css");
 @import url("../fonts/feather/css/feather.css");
 
-/**  =====================
-      Custom css start
-==========================  **/
+
 body {
   font-family: "Mada", sans-serif;
   font-size: 14px;
