@@ -6,7 +6,9 @@
   "scripts": {
     "client": "npm start --prefix client",
     "server": "nodemon server.js",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+  "test": "echo \"No tests defined\" && exit 0"
+
   },
   "author": "Ashmita Kayastha",
   "license": "",
@@ -39,3 +41,5 @@
     "nodemon": "^1.19.1"
   }
 }
+
+
