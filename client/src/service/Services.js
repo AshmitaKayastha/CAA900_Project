@@ -4,77 +4,77 @@ import NavBar from "../components/NavBar";
 import BrandLogoSlider from "../components/BrandLogoSlider";
 import Footer from "../components/Footer";
 import MobileMenu from "../components/MobileMenu";
+
 class Services extends Component {
   state = {
-    data: []
+    data: [],
+    error: false,
+    loading: true
   };
+
   async componentDidMount() {
-    //this.onTextSubmit("react tutorials");
-
-    const response = await axios
-      .get("http://localhost:5000/courses")
-      .then(result => {
-        console.log(result.data[0]);
-        return result;
-      });
-
-    this.setState({
-      data: response.data
-    });
+    try {
+      const response = await axios.get("http://localhost:5000/api/course/all");
+      this.setState({ data: response.data, loading: false });
+    } catch (err) {
+      console.error("Error fetching courses:", err);
+      this.setState({ error: true, loading: false });
+    }
   }
-  render() {
-    let data = this.state.data;
 
-    let Datalist = data.map((val, i) => {
+  renderCourses() {
+    const { data } = this.state;
+
+    if (data.length === 0) {
       return (
-        <div
-          className="col-lg-4 col-md-6 col-12 section-space--bottom--30"
-          key={i}
-        >
-          <div className="service-grid-item">
-            <div className="service-grid-item__image">
-              <div className="service-grid-item__image-wrapper">
-                <a
-                  href={
-                    `${process.env.PUBLIC_URL}/` +
-                    `blog-details-left-sidebar/` +
-                    `${val._id}`
-                  }
-                >
-                  <img
-                    src={val.courseImage}
-                    className="img-fluid"
-                    alt="Service Grid"
-                  />
-                </a>
-              </div>
+        <div className="text-center text-danger mt-4">
+          No courses found.
+        </div>
+      );
+    }
 
-              <div className="service-grid-item__content">
-                <h3 className="title">
-                  <a
-                    href={
-                      `${process.env.PUBLIC_URL}/` +
-                      `blog-details-left-sidebar/` +
-                      `${val._id}`
-                    }
-                  >
-                    {val.courseName}
-                  </a>
-                </h3>
-              </div>
+    return data.map((val, i) => (
+      <div
+        className="col-lg-4 col-md-6 col-12 section-space--bottom--30"
+        key={i}
+      >
+        <div className="service-grid-item">
+          <div className="service-grid-item__image">
+            <div className="service-grid-item__image-wrapper">
+              <a
+                href={`${process.env.PUBLIC_URL}/blog-details-left-sidebar/${val._id}`}
+              >
+                <img
+                  src={val.courseImage}
+                  className="img-fluid"
+                  alt="Service Grid"
+                />
+              </a>
+            </div>
+            <div className="service-grid-item__content">
+              <h3 className="title">
+                <a
+                  href={`${process.env.PUBLIC_URL}/blog-details-left-sidebar/${val._id}`}
+                >
+                  {val.courseName}
+                </a>
+              </h3>
             </div>
           </div>
         </div>
-      );
-    });
+      </div>
+    ));
+  }
+
+  render() {
+    const { error, loading } = this.state;
 
     return (
       <div>
         {/* Navigation bar */}
         <NavBar />
 
-        {/* breadcrumb */}
-        {/*====================  breadcrumb area ====================*/}
+        {/* Breadcrumb */}
         <div className="breadcrumb-area breadcrumb-bg">
           <div className="container">
             <div className="row">
@@ -86,34 +86,37 @@ class Services extends Component {
             </div>
           </div>
         </div>
-        {/*====================  End of breadcrumb area  ====================*/}
 
-        {/*====================  service page content ====================*/}
+        {/* Main Content */}
         <div className="page-wrapper section-space--inner--120">
-          {/*Service section start*/}
           <div className="service-section">
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
                   <div className="service-item-wrapper">
-                    <div className="row">{Datalist}</div>
+                    <div className="row">
+                      {loading ? (
+                        <div className="col text-center">
+                          <p>Loading courses...</p>
+                        </div>
+                      ) : error ? (
+                        <div className="col text-center text-danger">
+                          Unable to load courses. Please try again later.
+                        </div>
+                      ) : (
+                        this.renderCourses()
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {/*Service section end*/}
         </div>
 
-        {/*====================  End of service page content  ====================*/}
-
-        {/* Brand logo */}
+        {/* Brand logo and footer */}
         <BrandLogoSlider background="grey-bg" />
-
-        {/* Footer */}
         <Footer />
-
-        {/* Mobile Menu */}
         <MobileMenu />
       </div>
     );

@@ -104,7 +104,7 @@ class Root extends Component {
             />
              <PrivateRoute
               exact
-              path={`${process.env.PUBLIC_URL}/services/:id`}
+              path={`${process.env.PUBLIC_URL}/servicesbyinstructor/:id`}
               component={ServicesForInstructor}
             />
             <PrivateRoute

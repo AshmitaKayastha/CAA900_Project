@@ -38,7 +38,7 @@ class NavBar extends Component {
           <div className="header-area header-sticky header-sticky--default">
             <div className="header-area__desktop header-area__desktop--default">
               {/*=======  header navigation area  =======*/}
-              <div className="header-navigation-area default-bg">
+              <div className="header-navigation-area nav-bg">
                 <div className="container">
                   <div className="row">
                     <div className="col-lg-12">
@@ -51,12 +51,8 @@ class NavBar extends Component {
                           <nav className="main-nav">
                             <a href={`${process.env.PUBLIC_URL}/home-two`}>
                               <div className="logoHead">
-                                <img
-                                  src="/assets/img/logo/logonew.png"
-                                  alt=""
-                                  className="sticky-logo img-fluid"
-                                />
-                                <h3>KnowHow</h3>
+                                
+                                <h3>E-learning</h3>
                               </div>
                             </a>
 
@@ -222,12 +218,13 @@ class NavBar extends Component {
         </li>
         <li>
           <Link className="nav-link" to="/login/instructor">
-            Teach On Knowhow
+            Instructor Login
           </Link>
         </li>
       </React.Fragment>
     );
 
+    
     return (
       <div>
         {/*====================  header area ====================*/}
@@ -252,7 +249,7 @@ class NavBar extends Component {
                                 alt=""
                                 className="sticky-logo img-fluid"
                               />
-                              <h3>KnowHow</h3>
+                              <h3>E-Learning</h3>
                             </div>
                           </a>
 

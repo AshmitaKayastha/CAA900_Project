@@ -5,48 +5,57 @@ const passport = require("passport");
 const fileUpload = require("express-fileupload");
 const cors = require("cors");
 
-// Routes
-const users = require("./routes/api/users");
-const course = require("./routes/api/course");
-const category = require("./routes/api/category");
-const enroll = require("./routes/api/enrollRoute");
-const role = require("./routes/api/role");
-const lecture = require("./routes/api/lecture");
-const profile = require("./routes/api/profile");
-
+// Initialize Express App
 const app = express();
 
-// DB Config
+// =======================
+// 🔗 MongoDB Configuration
+// =======================
 const db = require("./config/keys").mongoURI;
 
-// Passport Middleware
-app.use(passport.initialize());
-require("./config/passport")(passport);
-
-// Middleware
-app.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 } }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 1000000 }));
-app.use(bodyParser.json({ limit: '50mb', extended: true }));
+// =======================
+// 🔧 Middleware Setup
+// =======================
 app.use(cors());
 app.options("*", cors());
 
-// Connect to MongoDB
-mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("MongoDB connected"))
-  .catch(err => console.log(err));
+app.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 } }));
 
-// Test Route
-app.get("/", (req, res) => res.send("Hello World"));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use(bodyParser.json({ limit: "50mb", extended: true }));
 
-// API Routes
-app.use("/api/users", users);
-app.use("/api/courses", course);
-app.use("/api/categories", category);
-app.use("/api/lectures", lecture);
-app.use("/api/enrollments", enroll);
-app.use("/api/roles", role);
-app.use("/api/profile", profile);
+// =======================
+// 🔐 Passport Setup
+// =======================
+app.use(passport.initialize());
+require("./config/passport")(passport);
 
-// Server Port
+// =======================
+// 🌐 MongoDB Connection
+// =======================
+mongoose
+  .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch(err => console.error("❌ MongoDB connection failed:", err));
+
+// =======================
+// 🚀 Test Route
+// =======================
+app.get("/", (req, res) => res.send("🎉 API is running!"));
+
+// =======================
+// 📦 API Routes
+// =======================
+app.use("/api/users", require("./routes/api/users"));
+app.use("/api/course", require("./routes/api/course"));           // Courses endpoint
+app.use("/api/category", require("./routes/api/category"));       // Categories endpoint
+app.use("/api/enrollment", require("./routes/api/enrollRoute"));  // Enrollment endpoint
+app.use("/api/role", require("./routes/api/role"));               // Roles endpoint
+app.use("/api/lecture", require("./routes/api/lecture"));         // Lectures endpoint
+app.use("/api/profile", require("./routes/api/profile"));         // Profiles endpoint
+
+// =======================
+// 🖥️ Start Server
+// =======================
 const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Server running on Port ${port}`));
+app.listen(port, () => console.log(`🚀 Server running on port ${port}`));

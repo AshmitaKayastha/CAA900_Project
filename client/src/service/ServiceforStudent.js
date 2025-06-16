@@ -4,83 +4,70 @@ import NavBar from "../components/NavBar";
 import BrandLogoSlider from "../components/BrandLogoSlider";
 import Footer from "../components/Footer";
 import MobileMenu from "../components/MobileMenu";
+
 class Services extends Component {
   state = {
     data: []
   };
+
   async componentDidMount() {
-    //this.onTextSubmit("react tutorials");
+    const studentId = localStorage.getItem("userid")?.replace(/"/g, "");
 
-    const response = await axios
-      .get(
-        "http://localhost:5000/enrollmentbystudent?id=" +
-          this.props.match.params.id
-      )
-      .then(result => {
-        console.log(result.data[0]);
-        return result;
-      });
+    if (!studentId) {
+      console.error("Student ID not found in localStorage.");
+      return;
+    }
 
-    this.setState({
-      data: response.data
-    });
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/enrollment/enrollmentbystudentid/${studentId}`
+      );
+      this.setState({ data: response.data });
+    } catch (error) {
+      console.error("Failed to fetch enrolled courses:", error);
+    }
   }
+
   render() {
-    let data = this.state.data;
+    const { data } = this.state;
 
-    let Datalist = data.map((val, i) => {
-      return (
-        <div
-          className="col-lg-4 col-md-6 col-12 section-space--bottom--30"
-          key={i}
-        >
-          <div className="service-grid-item">
-            <div className="service-grid-item__image">
-              <div className="service-grid-item__image-wrapper">
+    const Datalist = data.map((val, i) => (
+      <div
+        className="col-lg-4 col-md-6 col-12 section-space--bottom--30"
+        key={i}
+      >
+        <div className="service-grid-item">
+          <div className="service-grid-item__image">
+            <div className="service-grid-item__image-wrapper">
+              <a
+                href={`${process.env.PUBLIC_URL}/blog-details-left-sidebar/${val.course._id}`}
+              >
+                <img
+                  src={val.course.courseImage}
+                  className="img-fluid"
+                  alt="Service Grid"
+                />
+              </a>
+            </div>
+
+            <div className="service-grid-item__content">
+              <h3 className="title">
                 <a
-                  href={
-                    `${process.env.PUBLIC_URL}/` +
-                    `blog-details-left-sidebar/` +
-                    `${val.course._id}`
-                  }
+                  href={`${process.env.PUBLIC_URL}/blog-details-left-sidebar/${val.course._id}`}
                 >
-                  <img
-                    src={val.course.courseImage}
-                    className="img-fluid"
-                    alt="Service Grid"
-                  />
+                  {val.course.courseName}
                 </a>
-              </div>
-              {/* <div className="icon">
-                        <i className={val.iconClass} />
-                        </div> */}
-
-              <div className="service-grid-item__content">
-                <h3 className="title">
-                  <a
-                    href={
-                      `${process.env.PUBLIC_URL}/` +
-                      `blog-details-left-sidebar/` +
-                      `${val.course._id}`
-                    }
-                  >
-                    {val.course.courseName}
-                  </a>
-                </h3>
-              </div>
+              </h3>
             </div>
           </div>
         </div>
-      );
-    });
+      </div>
+    ));
 
     return (
       <div>
-        {/* Navigation bar */}
         <NavBar />
 
-        {/* breadcrumb */}
-        {/*====================  breadcrumb area ====================*/}
         <div className="breadcrumb-area breadcrumb-bg">
           <div className="container">
             <div className="row">
@@ -92,34 +79,38 @@ class Services extends Component {
             </div>
           </div>
         </div>
-        {/*====================  End of breadcrumb area  ====================*/}
 
-        {/*====================  service page content ====================*/}
         <div className="page-wrapper section-space--inner--120">
-          {/*Service section start*/}
           <div className="service-section">
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
                   <div className="service-item-wrapper">
-                    <div className="row">{Datalist}</div>
+                    <div className="row">
+                      {data.length > 0 ? (
+                        Datalist
+                      ) : (
+                        <div className="col text-center mt-5">
+                          <h4>No courses enrolled</h4>
+                          <p>Please browse available courses and enroll to get started.</p>
+                          <a
+                            href={`${process.env.PUBLIC_URL}/services`}
+                            className="btn btn-primary mt-3"
+                          >
+                            Browse All Courses
+                          </a>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {/*Service section end*/}
         </div>
 
-        {/*====================  End of service page content  ====================*/}
-
-        {/* Brand logo */}
         <BrandLogoSlider background="grey-bg" />
-
-        {/* Footer */}
         <Footer />
-
-        {/* Mobile Menu */}
         <MobileMenu />
       </div>
     );
