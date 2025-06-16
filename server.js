@@ -16,6 +16,8 @@ const db = require("./config/keys").mongoURI;
 // =======================
 // 🔧 Middleware Setup
 // =======================
+app.use("/api/instructor", require("./routes/api/instructor"));
+
 app.use(cors());
 app.options("*", cors());
 

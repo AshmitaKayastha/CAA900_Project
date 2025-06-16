@@ -4,7 +4,7 @@ import classnames from "classnames";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../actions/authActions";
-import NavBar from '../components/NavBar';
+import NavBar from "../components/NavBar";
 
 class Login extends Component {
   constructor() {
@@ -12,47 +12,37 @@ class Login extends Component {
     this.state = {
       email: "",
       password: "",
-      errors: {},
-      role: "student"
+      errors: {}
     };
-    this.onChange = this.onChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
   }
 
-  onChange(e) {
+  onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
-  }
+  };
 
-  onSubmit(e) {
+  onSubmit = (e) => {
     e.preventDefault();
 
-    const { email, password, role } = this.state;
-
-    if (!role) {
-      this.setState({ errors: { role: "Please select a login role first." } });
-      return;
-    }
+    const { email, password } = this.state;
 
     const newUser = {
       email,
-      password,
-      role
+      password
     };
 
     this.props.loginUser(newUser);
-  }
+  };
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
-      const role = nextProps.auth.users.role;
-      const id = nextProps.auth.users.id;
+      const { role, id } = nextProps.auth.users;
 
       if (role === "admin") {
         this.props.history.push("/dashboard");
       } else if (role === "student") {
         this.props.history.push(`/servicesforstudent/${id}`);
       } else if (role === "instructor") {
-        this.props.history.push(`/services/${id}`);
+        this.props.history.push(`/servicesbyinstructor/${id}`);
       } else {
         this.props.history.push("/home-two");
       }
@@ -63,12 +53,8 @@ class Login extends Component {
     }
   }
 
-  handleRoleSelect = (role) => {
-    this.setState({ role });
-  };
-
   render() {
-    const { errors, role } = this.state;
+    const { email, password, errors } = this.state;
 
     return (
       <div>
@@ -78,38 +64,11 @@ class Login extends Component {
             <div className="card">
               <div className="row align-items-center">
                 <div className="col-md-6">
-
-{/* === Role Selection Buttons === */}
-                    <div className="text-center mb-3">
-                      <button
-                        type="button"
-                        className={`btn btn-outline-primary m-1 ${role === "student" ? "active" : ""}`}
-                        onClick={() => this.handleRoleSelect("student")}
-                      >
-                        Student
-                      </button>
-                      <button
-                        type="button"
-                        className={`btn btn-outline-success m-1 ${role === "instructor" ? "active" : ""}`}
-                        onClick={() => this.handleRoleSelect("instructor")}
-                      >
-                        Instructor
-                      </button>
-                      <button
-                        type="button"
-                        className={`btn btn-outline-dark m-1 ${role === "admin" ? "active" : ""}`}
-                        onClick={() => this.handleRoleSelect("admin")}
-                      >
-                        Admin
-                      </button>
-                      {errors.role && <div className="text-danger mt-2">{errors.role}</div>}
-                    </div>
-
                   <div className="card-body">
                     <div className="logoHead">
                       <img
                         src="/assets/img/logo/logonew.png"
-                        alt=""
+                        alt="Logo"
                         height="60px"
                         width="60px"
                         className="sticky-logo img-fluid"
@@ -117,8 +76,6 @@ class Login extends Component {
                       <h3>E-Learning</h3>
                     </div>
                     <h4 className="mb-3 f-w-400">Login into your account</h4>
-
-                    
 
                     <form noValidate onSubmit={this.onSubmit}>
                       <div className="input-group mb-2">
@@ -134,13 +91,14 @@ class Login extends Component {
                             "is-invalid": errors.email
                           })}
                           placeholder="Email address"
-                          value={this.state.email}
+                          value={email}
                           onChange={this.onChange}
                         />
                         {errors.email && (
                           <div className="invalid-feedback">{errors.email}</div>
                         )}
                       </div>
+
                       <div className="input-group mb-3">
                         <div className="input-group-prepend">
                           <span className="input-group-text">
@@ -154,7 +112,7 @@ class Login extends Component {
                             "is-invalid": errors.password
                           })}
                           placeholder="Password"
-                          value={this.state.password}
+                          value={password}
                           onChange={this.onChange}
                         />
                         {errors.password && (
@@ -176,6 +134,7 @@ class Login extends Component {
                           </label>
                         </div>
                       </div>
+
                       <button className="btn btn-primary shadow-2 mb-4" type="submit">
                         Login
                       </button>
@@ -183,19 +142,17 @@ class Login extends Component {
 
                     <p className="mb-0 text-muted">
                       Don’t have an account?{" "}
-                      <a
-                        href={`${process.env.PUBLIC_URL}/register/${role || "student"}`}
-                        className="f-w-400"
-                      >
+                      <a href={`${process.env.PUBLIC_URL}/register/student`} className="f-w-400">
                         Signup
                       </a>
                     </p>
                   </div>
                 </div>
+
                 <div className="col-md-6 d-none d-md-block">
                   <img
                     src="../assets/img/login_banner.png"
-                    alt=""
+                    alt="Login Banner"
                     className="img-fluid"
                   />
                 </div>
@@ -214,12 +171,9 @@ Login.propTypes = {
   errors: PropTypes.object.isRequired
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   auth: state.auth,
   errors: state.errors
 });
 
-export default connect(
-  mapStateToProps,
-  { loginUser }
-)(Login);
+export default connect(mapStateToProps, { loginUser })(Login);
