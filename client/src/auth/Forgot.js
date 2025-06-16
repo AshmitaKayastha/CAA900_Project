@@ -20,7 +20,7 @@ export default class Forgot extends Component {
                       width="60px"
                       className="sticky-logo img-fluid"
                     />
-                    <h3>KnowHow</h3>
+                    <h3>E-learning</h3>
                   </div>
                   <h4 class="mb-3 f-w-400">Reset your password</h4>
                   <div class="input-group mb-4">

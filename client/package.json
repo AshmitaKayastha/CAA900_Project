@@ -2,6 +2,7 @@
   "name": "e-learning",
   "version": "0.1.0",
   "private": true,
+  
   "dependencies": {
     "@babel/eslint-parser": "^7.22.15",
     "@svgr/webpack": "4.1.0",
