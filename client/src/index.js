@@ -23,7 +23,7 @@ import Forgot from "./auth/Forgot";
 import HomeTwo from "./HomeTwo";
 import About from "./pages/About";
 import Services from "./service/Services";
-import ServicesForInstructor from "./service/ServicesByInstructor";
+import ServicesByInstructor from "./service/ServicesByInstructor";
 import Servicesforstudent from "./service/ServiceforStudent"
 import ServiceDetailsLeftSidebar from "./service/ServiceDetailsLeftSidebar";
 import Projects from "./project/Projects";
@@ -105,7 +105,7 @@ class Root extends Component {
              <PrivateRoute
               exact
               path={`${process.env.PUBLIC_URL}/servicesbyinstructor/:id`}
-              component={ServicesForInstructor}
+              component={ServicesByInstructor}
             />
             <PrivateRoute
               exact
