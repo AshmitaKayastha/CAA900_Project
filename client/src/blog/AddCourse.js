@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import NavBar from "../components/NavBar";
-import axios from "axios"; // or use: import axios from "../utils/axiosInstance";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const ShowCat = props => (
+const ShowCat = (props) => (
   <option key={props.todo._id} value={props.todo.categoryName}>
     {props.todo.categoryName}
   </option>
@@ -18,73 +20,89 @@ export default class AddCourse extends Component {
       category: "",
       todos: []
     };
-
-    this.onChangeCourseName = this.onChangeCourseName.bind(this);
-    this.onChangeDescription = this.onChangeDescription.bind(this);
-    this.onChangeCategory = this.onChangeCategory.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
   }
 
   componentDidMount() {
     axios
-      .get("http://localhost:5001/api/category") // ✅ fixed endpoint
-      .then(response => {
-        this.setState({
-          todos: response.data,
-          category: response.data.length > 0 ? response.data[0].categoryName : ""
-        });
+    .get("http://localhost:5001/api/category")
+
+      .then((response) => {
+        if (response.data.length > 0) {
+          this.setState({
+            todos: response.data,
+            category: response.data[0].categoryName // ✅ Set default category
+          });
+        }
       })
-      .catch(error => {
-        console.log("Error fetching categories:", error);
+      .catch((error) => {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to fetch categories.");
       });
   }
 
-  CatList() {
-    return this.state.todos.map((currentTodo, i) => {
-      return <ShowCat todo={currentTodo} key={i} />;
-    });
-  }
+  CatList = () => {
+    return this.state.todos.map((currentTodo, i) => (
+      <ShowCat todo={currentTodo} key={i} />
+    ));
+  };
 
-  onChangeCourseName(e) {
+  onChangeCourseName = (e) => {
     this.setState({ courseName: e.target.value });
-  }
+  };
 
-  onChangeDescription(e) {
+  onChangeDescription = (e) => {
     this.setState({ courseDescription: e.target.value });
-  }
+  };
 
-  onChangeCategory(e) {
+  onChangeCategory = (e) => {
     this.setState({ category: e.target.value });
-  }
+  };
 
-  onSubmit(e) {
+  onSubmit = (e) => {
     e.preventDefault();
+
+    const { courseName, courseDescription, instructor, category } = this.state;
+
+    // ✅ Prevent submission if required fields are missing
+    if (!courseName || !courseDescription || !category) {
+      toast.error("Please fill out all fields.");
+      return;
+    }
+
     const newCourse = {
-      courseName: this.state.courseName,
-      courseDescription: this.state.courseDescription,
-      instructor: this.state.instructor,
-      category: this.state.category
+      courseName,
+      courseDescription,
+      instructor,
+      category
     };
 
     console.log("Submitting course:", newCourse);
 
     axios
-      .post("http://localhost:5001/api/course/add", newCourse) // ✅ fixed endpoint
+      .post("http://localhost:5001/api/course/course/add", newCourse)
       .then(() => {
-        this.props.history.push("/add-lecture/" + this.state.instructor);
+        toast.success("Course added successfully!");
+        setTimeout(() => {
+          this.props.history.push("/add-lecture/" + instructor);
+        }, 1000);
       })
-      .catch(err => console.error("Course submission failed:", err));
-  }
+      .catch((err) => {
+        console.error("Course submission failed:", err);
+        toast.error("Failed to submit course.");
+      });
+  };
 
   render() {
     return (
       <div>
         <NavBar />
+        <ToastContainer />
         <div className="container">
           <div className="row">
             <div className="col-md-6 mt-5 mx-auto">
               <form onSubmit={this.onSubmit}>
                 <h1 className="h3 mb-3 font-weight-normal">Add Course</h1>
+
                 <div className="form-group">
                   <label>Course Name</label>
                   <input
@@ -118,7 +136,7 @@ export default class AddCourse extends Component {
                   </select>
                 </div>
 
-                <p>You selected: {this.state.category}</p>
+                <p>You selected: <strong>{this.state.category}</strong></p>
 
                 <button
                   type="submit"

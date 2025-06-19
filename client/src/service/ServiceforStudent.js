@@ -20,7 +20,7 @@ class Services extends Component {
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/enrollment/enrollmentbystudentid/${studentId}`
+        `http://localhost:5001/api/enrollment/enrollmentbystudentid/${studentId}`
       );
       this.setState({ data: response.data });
     } catch (error) {
@@ -118,3 +118,4 @@ class Services extends Component {
 }
 
 export default Services;
+   

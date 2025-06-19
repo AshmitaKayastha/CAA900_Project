@@ -13,7 +13,7 @@ class ServicesByInstructor extends Component {
   async componentDidMount() {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/instructor/courses/${this.props.match.params.id}`
+        `http://localhost:5001/api/instructor/courses/${this.props.match.params.id}`
       );
       this.setState({ data: response.data });
     } catch (error) {

@@ -9,7 +9,7 @@ const catmodel = require("../../models/Category");
 // ==============================================
 // ✅ Add a new course
 // ==============================================
-router.post("/course/add", async (req, res) => {
+router.post("/add", async (req, res) => {
   try {
     if (!req.body || !req.body.category || !req.body.instructor) {
       return res.status(400).json("Missing course data.");
