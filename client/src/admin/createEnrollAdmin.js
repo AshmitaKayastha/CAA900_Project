@@ -33,7 +33,7 @@ export default class CreateEnroll extends Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:5000/courses/")
+      .get("http://localhost:5001/courses/")
       .then(response => {
         this.setState({ Course: response.data });
       })
@@ -42,7 +42,7 @@ export default class CreateEnroll extends Component {
       });
 
     axios
-      .get("http://localhost:5000/users/")
+      .get("http://localhost:5001/users/")
       .then(response => {
         this.setState({ User: response.data });
       })
@@ -92,7 +92,7 @@ export default class CreateEnroll extends Component {
       todo_completed: this.state.todo_completed
     };
 
-    axios.post("http://localhost:5000/enroll/add/", newTodo).then(result => {
+    axios.post("http://localhost:5001/enroll/add/", newTodo).then(result => {
       this.props.history.push("/EnrollmentList/");
     });
 

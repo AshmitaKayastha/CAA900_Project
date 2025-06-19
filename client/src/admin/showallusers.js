@@ -48,7 +48,7 @@ export default class UserList extends Component {
     // To retrieve the todos data from the database --> use the componentDidMount lifecycle method
     componentDidMount() {
         //to get data from mongo link
-        axios.get('http://localhost:5000/users/')
+        axios.get('http://localhost:5001/users/')
             .then(response => {
                 this.setState({ todos: response.data });
             })

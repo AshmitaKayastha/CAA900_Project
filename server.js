@@ -5,24 +5,29 @@ const passport = require("passport");
 const fileUpload = require("express-fileupload");
 const cors = require("cors");
 
-// Initialize Express App
 const app = express();
 
 // =======================
-// 🔗 MongoDB Configuration
+// 🔐 MongoDB URI
 // =======================
 const db = require("./config/keys").mongoURI;
 
 // =======================
-// 🔧 Middleware Setup
+// 🌐 CORS Configuration
 // =======================
-app.use("/api/instructor", require("./routes/api/instructor"));
+const corsOptions = {
+  origin: "http://localhost:3001", // React frontend
+  credentials: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: "Content-Type, Authorization"
+};
 
-app.use(cors());
-app.options("*", cors());
+app.use(cors(corsOptions));
 
+// =======================
+// 📦 Middleware
+// =======================
 app.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 } }));
-
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.json({ limit: "50mb", extended: true }));
 
@@ -37,27 +42,28 @@ require("./config/passport")(passport);
 // =======================
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch(err => console.error("❌ MongoDB connection failed:", err));
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.error("MongoDB connection failed:", err));
 
 // =======================
 // 🚀 Test Route
 // =======================
-app.get("/", (req, res) => res.send("🎉 API is running!"));
+app.get("/", (req, res) => res.send("API is running!"));
 
 // =======================
 // 📦 API Routes
 // =======================
 app.use("/api/users", require("./routes/api/users"));
-app.use("/api/course", require("./routes/api/course"));           // Courses endpoint
-app.use("/api/category", require("./routes/api/category"));       // Categories endpoint
-app.use("/api/enrollment", require("./routes/api/enrollRoute"));  // Enrollment endpoint
-app.use("/api/role", require("./routes/api/role"));               // Roles endpoint
-app.use("/api/lecture", require("./routes/api/lecture"));         // Lectures endpoint
-app.use("/api/profile", require("./routes/api/profile"));         // Profiles endpoint
+app.use("/api/course", require("./routes/api/course"));
+app.use("/api/category", require("./routes/api/category"));
+app.use("/api/enrollment", require("./routes/api/enrollRoute"));
+app.use("/api/role", require("./routes/api/role"));
+app.use("/api/lecture", require("./routes/api/lecture"));
+app.use("/api/profile", require("./routes/api/profile"));
+app.use("/api/instructor", require("./routes/api/instructor"));
 
 // =======================
-// 🖥️ Start Server
+// 🖥️ Start Server on Port 5001
 // =======================
-const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`🚀 Server running on port ${port}`));
+const port = process.env.PORT || 5001;
+app.listen(port, () => console.log(`Server running on port ${port}`));
