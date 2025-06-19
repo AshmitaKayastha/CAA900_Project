@@ -3,64 +3,74 @@ import setAuthToken from "../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
 import { GET_ERRORS, SET_CURRENT_USER } from "./types";
 
-//registerUser action creator takes data and dispatch action to reducer along with payload
-export const registerUser = (userData, history) => dispatch => {
-  //here we are dealing with asyncnorous data while fetching from backend we need to wait for /////response then we can dispatch action and payload to the reducer.
-  //so we need to use thunk middleware
+// Base API URL
+const API_URL = "http://localhost:5001/api/users";
 
+// REGISTER User
+export const registerUser = (userData, history) => dispatch => {
   axios
-    .post("/api/users/login", userData)
+    .post(`${API_URL}/register`, userData)
     .then(res => history.push("/login"))
     .catch(err =>
       dispatch({
-        //we are just not returning we are dispatching using redux-thunk
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err.response?.data || { general: "Registration failed" }
       })
     );
 };
 
-//Login - Get user token , //loginUser action creator
+// LOGIN User
 export const loginUser = userData => dispatch => {
   axios
-    .post("/api/users/login", userData)
+    .post(`${API_URL}/login`, userData)
     .then(res => {
-     // console.log(res);
-      //save token to local storage
-      const { token } = res.data; 
-      //set token to local storage
+      const { token } = res.data;
+
+      // Save token to localStorage
       localStorage.setItem("jwtToken", token);
-   //   localStorage.setItem("username", res.data.first_name.charAt(0).toUpperCase() + res.data.first_name.slice(1)+" "+res.data.last_name.charAt(0).toUpperCase() + res.data.last_name.slice(1));
-      
-      //set token to auth header
+
+      // Set token to Auth header
       setAuthToken(token);
-      //Decode token to get user data
+
+      // Decode token
       const decoded = jwt_decode(token);
-      //Set current user
+
+      // Set current user
       dispatch(setCurrentUser(decoded));
     })
-    .catch(err =>
+    .catch(err => {
+      let errors = {};
+      if (err.response && err.response.data) {
+        errors = typeof err.response.data === "object"
+          ? err.response.data
+          : { general: err.response.data };
+      } else {
+        errors = { general: "Login failed. Please try again." };
+      }
+
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
-      })
-    );
+        payload: errors
+      });
+    });
 };
 
-//Set loggid in user , //setCurrentUser action creator
+// SET current user
 export const setCurrentUser = decoded => {
   return {
     type: SET_CURRENT_USER,
-    payload: decoded //actual user with all info
+    payload: decoded
   };
 };
 
-//Log user out , //logoutUser action creator
+// LOGOUT user
 export const logoutUser = () => dispatch => {
-  //Remove token from lc
+  // Remove token from localStorage
   localStorage.removeItem("jwtToken");
-  //Remove auth header for fututre requests
+
+  // Remove Auth header
   setAuthToken(false);
-  //set current user to {} which will
+
+  // Clear user from Redux store
   dispatch(setCurrentUser({}));
 };

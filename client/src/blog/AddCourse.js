@@ -1,18 +1,16 @@
 import React, { Component } from "react";
 import NavBar from "../components/NavBar";
-import axios from "axios";
-// import ShowCategory from './ShowCategory';
+import axios from "axios"; // or use: import axios from "../utils/axiosInstance";
 
 const ShowCat = props => (
   <option key={props.todo._id} value={props.todo.categoryName}>
     {props.todo.categoryName}
   </option>
 );
+
 export default class AddCourse extends Component {
   constructor(props) {
     super(props);
-
-    /** Setting the initial state of the component by assigned an object to this.state **/
     this.state = {
       courseName: "",
       courseDescription: "",
@@ -20,76 +18,65 @@ export default class AddCourse extends Component {
       category: "",
       todos: []
     };
+
     this.onChangeCourseName = this.onChangeCourseName.bind(this);
     this.onChangeDescription = this.onChangeDescription.bind(this);
     this.onChangeCategory = this.onChangeCategory.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
+
   componentDidMount() {
-    //to get data from mongo link
     axios
-      .get("http://localhost:5000/categories/")
+      .get("http://localhost:5001/api/category") // ✅ fixed endpoint
       .then(response => {
-        // console.log(response.data);
         this.setState({
           todos: response.data,
-          category: response.data[0].categoryName
+          category: response.data.length > 0 ? response.data[0].categoryName : ""
         });
       })
-      .catch(function(error) {
-        console.log(error);
+      .catch(error => {
+        console.log("Error fetching categories:", error);
       });
   }
 
   CatList() {
-    return this.state.todos.map(function(currentTodo, i) {
-      //  console.log(currentTodo.categoryName)
+    return this.state.todos.map((currentTodo, i) => {
       return <ShowCat todo={currentTodo} key={i} />;
     });
   }
 
   onChangeCourseName(e) {
-    this.setState({
-      courseName: e.target.value
-    });
+    this.setState({ courseName: e.target.value });
   }
 
   onChangeDescription(e) {
-    this.setState({
-      courseDescription: e.target.value
-    });
+    this.setState({ courseDescription: e.target.value });
   }
 
   onChangeCategory(e) {
-    this.setState({
-      category: e.target.value
-    });
+    this.setState({ category: e.target.value });
   }
+
   onSubmit(e) {
-    e.preventDefault(); //ensure that the default HTML form submit behaviour is prevented
-
-    console.log(`Form submitted:`);
-    console.log(`Todo name: ${this.state.courseName}`);
-    console.log(`Todo description: ${this.state.courseDescription}`);
-    console.log(`Todo instructor: ${this.state.instructor}`);
-    console.log(`Todo category: ${this.state.category}`);
-
-    const newTodo = {
+    e.preventDefault();
+    const newCourse = {
       courseName: this.state.courseName,
       courseDescription: this.state.courseDescription,
-      instructor: this.props.match.params.id,
+      instructor: this.state.instructor,
       category: this.state.category
-      // todo_completed: this.state.todo_completed
     };
-    axios
-      .post("http://localhost:5000/course/add", newTodo)
 
-      .then(result => {
-        this.props.history.push("/add-lecture/" + this.props.match.params.id);
-      });
+    console.log("Submitting course:", newCourse);
+
+    axios
+      .post("http://localhost:5001/api/course/add", newCourse) // ✅ fixed endpoint
+      .then(() => {
+        this.props.history.push("/add-lecture/" + this.state.instructor);
+      })
+      .catch(err => console.error("Course submission failed:", err));
   }
+
   render() {
-    var message = "You selected " + this.state.category;
     return (
       <div>
         <NavBar />
@@ -103,48 +90,38 @@ export default class AddCourse extends Component {
                   <input
                     type="text"
                     className="form-control"
-                    name="coursename"
                     placeholder="Enter Course name"
                     value={this.state.courseName}
                     onChange={this.onChangeCourseName}
                   />
                 </div>
+
                 <div className="form-group">
                   <label>Description</label>
                   <textarea
-                    type="text"
                     className="form-control"
-                    name="description"
                     placeholder="Enter Description"
                     value={this.state.courseDescription}
                     onChange={this.onChangeDescription}
                   />
                 </div>
-                <div>
-                  <label>Course Category</label>
-                  <br />
 
+                <div className="form-group">
+                  <label>Course Category</label>
                   <select
-                    style={{
-                      width: "100%",
-                      padding: "10px",
-                      border: "1px solid lightgray",
-                      borderRadius: "5px"
-                    }}
+                    className="form-control"
                     name="category"
-                    id="ada"
                     onChange={this.onChangeCategory}
                     value={this.state.category}
                   >
                     {this.CatList()}
-                    {/* <option value="Mobile Development">Android Development</option> */}
                   </select>
                 </div>
-                <p>{message}</p>
-                <br />
+
+                <p>You selected: {this.state.category}</p>
+
                 <button
                   type="submit"
-                  value="add course"
                   className="btn btn-lg btn-primary btn-block"
                 >
                   Add Course
