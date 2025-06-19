@@ -24,7 +24,7 @@ class HeroSliderOne extends Component {
         </div>
       ),
       autoplay: {
-        delay: 5000
+        delay: 5001
       }
     };
 

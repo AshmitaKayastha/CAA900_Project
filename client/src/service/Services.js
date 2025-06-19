@@ -14,7 +14,7 @@ class Services extends Component {
 
   async componentDidMount() {
     try {
-      const response = await axios.get("http://localhost:5000/api/course/all");
+      const response = await axios.get("http://localhost:5001/api/course/all");
       this.setState({ data: response.data, loading: false });
     } catch (err) {
       console.error("Error fetching courses:", err);

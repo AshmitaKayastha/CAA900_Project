@@ -36,14 +36,14 @@ class BrandLogoSlider extends Component{
         }
 
         let data = [
-            {img: '1.png', logoLink: '/'},
-            {img: '2.png', logoLink: '/'},
-            {img: '3.png', logoLink: '/'},
-            {img: '4.png', logoLink: '/'},
-            {img: '1.png', logoLink: '/'},
-            {img: '2.png', logoLink: '/'},
-            {img: '3.png', logoLink: '/'},
-            {img: '4.png', logoLink: '/'}
+            {img: '2.jpg', logoLink: '/'},
+            {img: '2.jpg', logoLink: '/'},
+            {img: '3.jpg', logoLink: '/'},
+            {img: '2.jpg', logoLink: '/'},
+            {img: '2.jpg', logoLink: '/'},
+            {img: '3.jpg', logoLink: '/'},
+            {img: '3.jpg', logoLink: '/'},
+            {img: '2.jpg', logoLink: '/'}
         ];
 
         let DataList = data.map((val, i)=>{
