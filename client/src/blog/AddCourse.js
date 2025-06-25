@@ -79,7 +79,7 @@ export default class AddCourse extends Component {
     console.log("Submitting course:", newCourse);
 
     axios
-      .post("http://localhost:5001/api/course/course/add", newCourse)
+      .post("http://localhost:5001/api/course/add", newCourse)
       .then(() => {
         toast.success("Course added successfully!");
         setTimeout(() => {

@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const fileUpload = require("express-fileupload");
-const cors = require("cors");
 
 const app = express();
 
@@ -13,16 +12,36 @@ const app = express();
 const db = require("./config/keys").mongoURI;
 
 // =======================
-// 🌐 CORS Configuration
+// 🌐 Dynamic CORS Configuration
 // =======================
-const corsOptions = {
-  origin: "http://localhost:3001", // React frontend
-  credentials: true,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: "Content-Type, Authorization"
-};
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://192.168.178.1:3000" // Replace with your LAN IP if different
+];
 
-app.use(cors(corsOptions));
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+  );
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
 
 // =======================
 // 📦 Middleware
@@ -43,7 +62,7 @@ require("./config/passport")(passport);
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB connected"))
-  .catch(err => console.error("MongoDB connection failed:", err));
+  .catch((err) => console.error("MongoDB connection failed:", err));
 
 // =======================
 // 🚀 Test Route

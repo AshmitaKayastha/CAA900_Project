@@ -88,7 +88,7 @@ export default class Upload extends Component {
 
   checkFileSize = event => {
     const files = event.target.files;
-    const size = 2000000000000;
+    const size = 2000000000; // ~2GB
     let err = [];
 
     for (let x = 0; x < files.length; x++) {
@@ -120,24 +120,29 @@ export default class Upload extends Component {
     data.append("course", this.state.course);
     data.append("title", this.state.title);
 
-    if (!this.state.youtubelink) {
+    if (this.state.youtubelink) {
+      data.append("videoLink", this.state.youtubelink);
+
+      axios
+        .post("http://localhost:5001/api/lecture/lectures/youtubeupload", data)
+        .then(() => toast.success("YouTube URL uploaded"))
+        .catch(() => toast.error("Upload failed"));
+    } else {
       for (let x = 0; x < this.state.selectedFile.length; x++) {
         data.append("file", this.state.selectedFile[x]);
       }
-    } else {
-      data.append("videoLink", this.state.youtubelink);
-    }
 
-    axios
-      .post("http://localhost:5001/lectures/localupload", data, {
-        onUploadProgress: ProgressEvent => {
-          this.setState({
-            loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100
-          });
-        }
-      })
-      .then(() => toast.success("Upload successful"))
-      .catch(() => toast.error("Upload failed"));
+      axios
+        .post("http://localhost:5001/api/lecture/lectures/localupload", data, {
+          onUploadProgress: ProgressEvent => {
+            this.setState({
+              loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100
+            });
+          }
+        })
+        .then(() => toast.success("Upload successful"))
+        .catch(() => toast.error("Upload failed"));
+    }
 
     setTimeout(() => {
       window.location.reload();
