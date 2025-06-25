@@ -93,7 +93,7 @@ class Sidebar extends Component {
       return (
         <div className="sidebar-blog" key={i}>
           <a href="blog-details-left-sidebar.html" className="image">
-            <img src={`assets/img/blog/${val.postImage}`} alt="" />
+            <img src={`/assets/img/brand-logo/${val.postImage}`} alt="" />
           </a>
           <div className="content">
             <h5>

@@ -5,7 +5,7 @@ class BlogPostGrid extends Component {
     let data = [
       {
         postLink: "blog-details-left-sidebar",
-        postImg: "1.jpg",
+        postImg: "2.jpg",
         postDate: "June 4, 2025",
         postTitle: "Vue JS 2 - The Complete Guide (incl. Vue Router & Vuex)",
         postExcerpt:
@@ -29,7 +29,7 @@ class BlogPostGrid extends Component {
       },
       {
         postLink: "blog-details-left-sidebar",
-        postImg: "1.jpg",
+        postImg: "2.jpg",
         postDate: "June 4, 2025",
         postTitle: "Python and Django Full Stack Web Developer Bootcamp",
         postExcerpt:
@@ -60,7 +60,7 @@ class BlogPostGrid extends Component {
             <div className="blog-post-slider__image section-space--bottom--30">
               <a href={`${process.env.PUBLIC_URL}/${val.postLink}`}>
                 <img
-                  src={`assets/img/blog/${val.postImg}`}
+                  src={`/assets/img/brand-logo/${val.postImg}`}
                   className="img-fluid"
                   alt=""
                 />

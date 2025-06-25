@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
+const cors = require("cors");
 const passport = require("passport");
 const fileUpload = require("express-fileupload");
 
@@ -12,43 +12,33 @@ const app = express();
 const db = require("./config/keys").mongoURI;
 
 // =======================
-// 🌐 Dynamic CORS Configuration
+// 🌐 CORS Setup
 // =======================
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
-  "http://192.168.178.1:3000" // Replace with your LAN IP if different
+  "http://192.168.178.1:3000"
 ];
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-  );
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true
+  })
+);
 
 // =======================
 // 📦 Middleware
 // =======================
 app.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 } }));
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-app.use(bodyParser.json({ limit: "50mb", extended: true }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // =======================
 // 🔐 Passport Setup
@@ -77,12 +67,12 @@ app.use("/api/course", require("./routes/api/course"));
 app.use("/api/category", require("./routes/api/category"));
 app.use("/api/enrollment", require("./routes/api/enrollRoute"));
 app.use("/api/role", require("./routes/api/role"));
-app.use("/api/lecture", require("./routes/api/lecture"));
+app.use("/api/lecture", require("./routes/api/lecture")); // ✅ your target route
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/instructor", require("./routes/api/instructor"));
 
 // =======================
-// 🖥️ Start Server on Port 5001
+// 🖥️ Start Server
 // =======================
 const port = process.env.PORT || 5001;
 app.listen(port, () => console.log(`Server running on port ${port}`));

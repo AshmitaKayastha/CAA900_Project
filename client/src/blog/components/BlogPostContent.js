@@ -23,7 +23,7 @@ class BlogPostContent extends Component {
             <div className="blog-inner">
               <div className="media">
                 <div className="image">
-                  <img src="assets/img/blog/blog-details-1.jpg" alt="" />
+                  <img src="/assets/img/brandlogo/2.jpg" alt="" />
                 </div>
               </div>
               <div className="content">
