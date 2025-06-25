@@ -1,77 +1,94 @@
 const express = require("express");
 const router = express.Router();
 const coursemodel = require("../../models/Course.js");
-// const fileUpload = require('express-fileupload');
-//mongoose
+const lecturemodel = require("../../models/Lecture.js");
 const mongoose = require("mongoose");
-var multer = require("multer");
-let lecturemodel = require("../../models/Lecture.js");
+const path = require("path");
 
-/*Get videos*/
-router.get("/lectures", function(req, res) {
+// File upload (using express-fileupload)
+const fileUpload = require("express-fileupload");
+
+// If not already applied globally in server.js
+// router.use(fileUpload());
+
+/* ======================
+   GET: Fetch Lectures
+====================== */
+router.get("/lectures", function (req, res) {
   lecturemodel
-    .find({
-      course: req.query.id
-    })
+    .find({ course: req.query.id })
     .populate({ path: "course", model: "courses", select: "courseDescription" })
-    .then(doc => {
-      // res.setHeader('Access-Control-Expose-Headers', 'Content-Range');
-      //res.setHeader('Content-Range', 'users 0-5/5');
-      res.json(doc);
-      // console.log("populated doc:" + doc);
-    })
-    .catch(err => {
-      res.status(500).json(err);
+    .then(doc => res.json(doc))
+    .catch(err => res.status(500).json(err));
+});
+
+/* ================================
+   POST: Local File Video Upload
+================================ */
+router.post("/lectures/localupload", async function (req, res) {
+  try {
+    const { course, title } = req.body;
+    if (!course || !title || !req.files) {
+      return res.status(400).json({ error: "Missing required fields or file." });
+    }
+
+    // Find course by course name
+    const foundCourse = await coursemodel.findOne({ courseName: course });
+    if (!foundCourse) {
+      return res.status(404).json({ error: "Course not found." });
+    }
+
+    const courseId = foundCourse._id;
+    const uploadedFile = req.files.file;
+
+    const savePath = path.join(__dirname, "../../client/public/assets/", uploadedFile.name);
+    await uploadedFile.mv(savePath); // move file
+
+    const newLecture = new lecturemodel({
+      course: courseId,
+      title,
+      videoLink: "/assets/" + uploadedFile.name
     });
-  // res.send('this is get route upload');
-  // res.render('index', {title: 'Upload file'});
-});
 
-/* POST videos*/
-router.post("/lectures/localupload", function(req, res) {
-  // res.send('this is post route upload');
-  //  console.log(req.files.file);
-
-  coursemodel.find({ courseName: req.body.course }, function(error, cat) {
-    if (!error && cat) {
-      //console.log(cat)
-      req.body.course = cat[0]._id;
-    }
-    console.log(req.files);
-    if (req.files != undefined) {
-      let imagefile = req.files.file;
-      imagefile.mv(`Client/public/assets/${req.files.file.name}`);
-      if (imagefile) {
-        req.body.videoLink = "/assets/" + imagefile.name;
-      }
-    } else {
-      console.log(req.body.videoLink);
-      //req.body.videoLink=req.body.youtubelink;
-    }
-    const upload = new lecturemodel(req.body).save();
-    res.send("this is post route upload");
-    // res.redirect('back');
-  });
-});
-
-router.post("/lectures/youtubeupload", (req, res) => {
-  //req.body
-  if (!req.body) {
-    return res.status(400).send("request body is missing");
+    const savedLecture = await newLecture.save();
+    res.status(200).json(savedLecture);
+  } catch (err) {
+    console.error("Upload failed:", err);
+    res.status(500).json({ error: "Internal server error", details: err.message });
   }
+});
 
-  let model = new lecturemodel(req.body);
-  model
-    .save()
-    .then(doc => {
-      if (!doc || doc.length === 0) {
-        return res.status(500).send(doc);
-      }
-      res.status(200).send(doc);
-    })
-    .catch(err => {
-      res.status(500).json(err);
+/* ================================
+   POST: YouTube Video Upload
+================================ */
+router.post("/lectures/youtubeupload", async (req, res) => {
+  try {
+    console.log("REQ BODY:", req.body);
+    const { course, title, videoLink } = req.body;
+
+    if (!course || !title || !videoLink) {
+      return res.status(400).json({ error: "Missing required fields." });
+    }
+
+    // Find course by course name
+    const foundCourse = await coursemodel.findOne({ courseName: course });
+    if (!foundCourse) {
+      return res.status(404).json({ error: "Course not found." });
+    }
+
+    const newLecture = new lecturemodel({
+      course: foundCourse._id,
+      title,
+      videoLink
     });
+
+    const saved = await newLecture.save();
+    res.status(200).json(saved);
+  } catch (err) {
+    console.error("YouTube upload failed:", err);
+    res.status(500).json({ error: "Internal server error", details: err.message });
+  }
 });
 
 module.exports = router;
+
