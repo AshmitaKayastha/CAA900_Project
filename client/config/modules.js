@@ -1,81 +1,69 @@
-'use strict';
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const passport = require("passport");
+const fileUpload = require("express-fileupload");
+const cors = require("cors");
 
-const fs = require('fs');
-const path = require('path');
-const paths = require('./paths');
-const chalk = require('react-dev-utils/chalk');
+const app = express();
 
-/**
- * Get the baseUrl of a compilerOptions object.
- *
- * @param {Object} options
- */
-function getAdditionalModulePaths(options = {}) {
-  const baseUrl = options.baseUrl;
+// =======================
+// 🔐 MongoDB URI
+// =======================
+const db = require("./config/keys").mongoURI;
 
-  // We need to explicitly check for null and undefined (and not a falsy value) because
-  // TypeScript treats an empty string as `.`.
-  if (baseUrl == null) {
- 
+// =======================
+// 🌐 CORS Configuration
+// =======================
+const corsOptions = {
+  origin: "http://localhost:3000", // React frontend
+  credentials: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: "Content-Type, Authorization"
+};
 
-    const nodePath = process.env.NODE_PATH || '';
-    return nodePath.split(path.delimiter).filter(Boolean);
-  }
+app.use(cors(corsOptions));
 
-  const baseUrlResolved = path.resolve(paths.appPath, baseUrl);
+// =======================
+// 📦 Middleware
+// =======================
+app.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 } }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use(bodyParser.json({ limit: "50mb", extended: true }));
 
-.
-  if (path.relative(paths.appNodeModules, baseUrlResolved) === '') {
-    return null;
-  }
+// =======================
+// 🔐 Passport Setup
+// =======================
+app.use(passport.initialize());
+require("./config/passport")(passport);
 
+// =======================
+// 🌐 MongoDB Connection
+// =======================
+mongoose
+  .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.error("MongoDB connection failed:", err));
 
-  if (path.relative(paths.appSrc, baseUrlResolved) === '') {
-    return [paths.appSrc];
-  }
+// =======================
+// 🚀 Test Route
+// =======================
+app.get("/", (req, res) => res.send("API is running!"));
 
-  
-  throw new Error(
-    chalk.red.bold(
-      "Your project's `baseUrl` can only be set to `src` or `node_modules`." +
-        ' Create React App does not support other values at this time.'
-    )
-  );
-}
+// =======================
+// 📦 API Routes
+// =======================
+app.use("/api/users", require("./routes/api/users"));
+app.use("/api/course", require("./routes/api/course"));
+app.use("/api/category", require("./routes/api/category"));
+app.use("/api/enrollment", require("./routes/api/enrollRoute"));
+app.use("/api/role", require("./routes/api/role"));
+app.use("/api/lecture", require("./routes/api/lecture"));
+app.use("/api/profile", require("./routes/api/profile"));
+app.use("/api/instructor", require("./routes/api/instructor"));
 
-function getModules() {
-  // Check if TypeScript is setup
-  const hasTsConfig = fs.existsSync(paths.appTsConfig);
-  const hasJsConfig = fs.existsSync(paths.appJsConfig);
-
-  if (hasTsConfig && hasJsConfig) {
-    throw new Error(
-      'You have both a tsconfig.json and a jsconfig.json. If you are using TypeScript please remove your jsconfig.json file.'
-    );
-  }
-
-  let config;
-
-  // If there's a tsconfig.json we assume it's a
-  // TypeScript project and set up the config
-  // based on tsconfig.json
-  if (hasTsConfig) {
-    config = require(paths.appTsConfig);
-    // Otherwise we'll check if there is jsconfig.json
-    // for non TS projects.
-  } else if (hasJsConfig) {
-    config = require(paths.appJsConfig);
-  }
-
-  config = config || {};
-  const options = config.compilerOptions || {};
-
-  const additionalModulePaths = getAdditionalModulePaths(options);
-
-  return {
-    additionalModulePaths: additionalModulePaths,
-    hasTsConfig,
-  };
-}
-
-module.exports = getModules();
+// =======================
+// 🖥️ Start Server on Port 5001
+// =======================
+const port = process.env.PORT || 5001;
+app.listen(port, () => console.log(`Server running on port ${port}`));

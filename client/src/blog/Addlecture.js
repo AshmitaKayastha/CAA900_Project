@@ -5,8 +5,8 @@ import { Progress } from "reactstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const ShowCourse = props => (
-  <option key={props.todo.courseName} value={props.todo.courseName}>
+const ShowCourse = (props) => (
+  <option key={props.todo._id} value={props.todo._id}>
     {props.todo.courseName}
   </option>
 );
@@ -31,10 +31,10 @@ export default class Upload extends Component {
   componentDidMount() {
     axios
       .get(`http://localhost:5001/api/course/coursebyinstructor?id=${this.props.match.params.id}`)
-      .then(response => {
+      .then((response) => {
         this.setState({ Courses: response.data });
       })
-      .catch(error => {
+      .catch((error) => {
         console.log("Error fetching instructor courses:", error);
       });
   }
@@ -57,26 +57,26 @@ export default class Upload extends Component {
     this.setState({ youtubelink: e.target.value });
   }
 
-  checkMimeType = event => {
+  checkMimeType = (event) => {
     const files = event.target.files;
     const types = ["video/mp4", "video/mkv"];
     let err = [];
 
     for (let x = 0; x < files.length; x++) {
-      if (types.every(type => files[x].type !== type)) {
+      if (types.every((type) => files[x].type !== type)) {
         err.push(files[x].type + " is not a supported format\n");
       }
     }
 
     if (err.length > 0) {
-      err.forEach(e => toast.error(e));
+      err.forEach((e) => toast.error(e));
       event.target.value = null;
     }
 
     return err.length === 0;
   };
 
-  maxSelectFile = event => {
+  maxSelectFile = (event) => {
     const files = event.target.files;
     if (files.length > 3) {
       toast.warn("Only 3 files can be uploaded at a time");
@@ -86,9 +86,9 @@ export default class Upload extends Component {
     return true;
   };
 
-  checkFileSize = event => {
+  checkFileSize = (event) => {
     const files = event.target.files;
-    const size = 2000000000000;
+    const size = 2000000000; // ~2GB
     let err = [];
 
     for (let x = 0; x < files.length; x++) {
@@ -98,14 +98,14 @@ export default class Upload extends Component {
     }
 
     if (err.length > 0) {
-      err.forEach(e => toast.error(e));
+      err.forEach((e) => toast.error(e));
       event.target.value = null;
     }
 
     return err.length === 0;
   };
 
-  onChangeHandler = event => {
+  onChangeHandler = (event) => {
     if (
       this.maxSelectFile(event) &&
       this.checkMimeType(event) &&
@@ -116,28 +116,42 @@ export default class Upload extends Component {
   };
 
   onClickHandler = () => {
-    const data = new FormData();
-    data.append("course", this.state.course);
-    data.append("title", this.state.title);
+    if (this.state.youtubelink) {
+      // ✅ Send JSON for YouTube upload
+      const payload = {
+        course: this.state.course, // This is _id now
+        title: this.state.title,
+        videoLink: this.state.youtubelink
+      };
 
-    if (!this.state.youtubelink) {
+      axios
+        .post("http://localhost:5001/api/lecture/lectures/youtubeupload", payload)
+        .then(() => toast.success("YouTube URL uploaded"))
+        .catch((error) => {
+          console.error("Upload error:", error.response?.data || error.message);
+          toast.error("Upload failed");
+        });
+    } else {
+      // 🟨 Local file upload
+      const data = new FormData();
+      data.append("course", this.state.course);
+      data.append("title", this.state.title);
+
       for (let x = 0; x < this.state.selectedFile.length; x++) {
         data.append("file", this.state.selectedFile[x]);
       }
-    } else {
-      data.append("videoLink", this.state.youtubelink);
-    }
 
-    axios
-      .post("http://localhost:5001/lectures/localupload", data, {
-        onUploadProgress: ProgressEvent => {
-          this.setState({
-            loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100
-          });
-        }
-      })
-      .then(() => toast.success("Upload successful"))
-      .catch(() => toast.error("Upload failed"));
+      axios
+        .post("http://localhost:5001/api/lecture/lectures/localupload", data, {
+          onUploadProgress: (ProgressEvent) => {
+            this.setState({
+              loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100
+            });
+          }
+        })
+        .then(() => toast.success("Upload successful"))
+        .catch(() => toast.error("Upload failed"));
+    }
 
     setTimeout(() => {
       window.location.reload();
@@ -145,7 +159,10 @@ export default class Upload extends Component {
   };
 
   render() {
-    const message2 = "You have selected " + this.state.course;
+    const message2 = this.state.course
+      ? "You have selected " + this.state.course
+      : "Please select a course";
+
     return (
       <div>
         <NavBar />
@@ -162,6 +179,7 @@ export default class Upload extends Component {
                     onChange={this.onChangeCourse}
                     value={this.state.course}
                   >
+                    <option value="">-- Select a Course --</option>
                     {this.CourseList()}
                   </select>
                   <p>{message2}</p>
@@ -197,7 +215,7 @@ export default class Upload extends Component {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="ex: https://www.youtube.com/embed/..."
+                    placeholder="ex: https://www.youtube.com/watch?v=..."
                     value={this.state.youtubelink}
                     onChange={this.onChangeYouTubeLink}
                   />
