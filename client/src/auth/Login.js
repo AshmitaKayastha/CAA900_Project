@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../actions/authActions";
 import NavBar from "../components/NavBar";
+import { withRouter, Link } from "react-router-dom";
 
 class Login extends Component {
   constructor() {
@@ -22,21 +23,14 @@ class Login extends Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-
     const { email, password } = this.state;
-
-    const newUser = {
-      email,
-      password
-    };
-
+    const newUser = { email, password };
     this.props.loginUser(newUser);
   };
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
       const { role, id } = nextProps.auth.users;
-
       if (role === "admin") {
         this.props.history.push("/dashboard");
       } else if (role === "student") {
@@ -55,6 +49,7 @@ class Login extends Component {
 
   render() {
     const { email, password, errors } = this.state;
+    const role = this.props.match.params.role || "student"; // fallback to student
 
     return (
       <div>
@@ -142,16 +137,16 @@ class Login extends Component {
 
                     <p className="mb-0 text-muted">
                       Don’t have an account?{" "}
-                      <a href={`${process.env.PUBLIC_URL}/register/student`} className="f-w-400">
+                      <Link to={`/register/${role}`} className="f-w-400">
                         Signup
-                      </a>
+                      </Link>
                     </p>
                   </div>
                 </div>
 
                 <div className="col-md-6 d-none d-md-block">
                   <img
-                    src="../assets/img/login_banner.png"
+                    src="/assets/img/login_banner.png"
                     alt="Login Banner"
                     className="img-fluid"
                   />
@@ -176,4 +171,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { loginUser })(Login);
+export default connect(mapStateToProps, { loginUser })(withRouter(Login));

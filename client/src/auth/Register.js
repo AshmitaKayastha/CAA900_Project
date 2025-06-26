@@ -17,8 +17,19 @@ class Register extends Component {
       email: "",
       password: "",
       password2: "",
+      department: "", // for admin
+      linkedin: "",   // for instructor
       errors: {}
     };
+  }
+
+  componentDidMount() {
+    const validRoles = ["student", "instructor", "admin"];
+    const { role } = this.props.match.params;
+
+    if (!validRoles.includes(role)) {
+      this.props.history.push("/404");
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -33,6 +44,7 @@ class Register extends Component {
 
   onSubmit = (e) => {
     e.preventDefault();
+    const { role } = this.props.match.params;
 
     const newUser = {
       first_name: this.state.first_name,
@@ -40,15 +52,17 @@ class Register extends Component {
       email: this.state.email,
       password: this.state.password,
       password2: this.state.password2,
-      role: this.props.match.params.role
+      role
     };
 
-    // ✅ Call backend using proxy (avoid hardcoding localhost:5000)
+    // Optional role-specific data
+    if (role === "admin") newUser.department = this.state.department;
+    if (role === "instructor") newUser.linkedin = this.state.linkedin;
+
     axios
       .post("/api/users/register", newUser)
       .then((res) => {
-        console.log(res.data);
-        this.props.history.push("/login/" + this.props.match.params.role);
+        this.props.history.push(`/login/${role}`);
       })
       .catch((err) => {
         if (err.response && err.response.data) {
@@ -58,7 +72,10 @@ class Register extends Component {
   };
 
   render() {
+    const { role } = this.props.match.params;
     const { errors } = this.state;
+
+    const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
 
     return (
       <div>
@@ -79,7 +96,7 @@ class Register extends Component {
                       />
                       <h3>E-learning</h3>
                     </div>
-                    <h4 className="mb-3 f-w-400">Sign up into your account</h4>
+                    <h4 className="mb-3 f-w-400">Sign up as {roleLabel}</h4>
                     <form noValidate onSubmit={this.onSubmit}>
                       {/* First Name */}
                       <div className="input-group mb-2">
@@ -99,9 +116,7 @@ class Register extends Component {
                           onChange={this.onChange}
                         />
                         {errors.first_name && (
-                          <div className="invalid-feedback">
-                            {errors.first_name}
-                          </div>
+                          <div className="invalid-feedback">{errors.first_name}</div>
                         )}
                       </div>
 
@@ -123,9 +138,7 @@ class Register extends Component {
                           onChange={this.onChange}
                         />
                         {errors.last_name && (
-                          <div className="invalid-feedback">
-                            {errors.last_name}
-                          </div>
+                          <div className="invalid-feedback">{errors.last_name}</div>
                         )}
                       </div>
 
@@ -169,9 +182,7 @@ class Register extends Component {
                           onChange={this.onChange}
                         />
                         {errors.password && (
-                          <div className="invalid-feedback">
-                            {errors.password}
-                          </div>
+                          <div className="invalid-feedback">{errors.password}</div>
                         )}
                       </div>
 
@@ -193,23 +204,57 @@ class Register extends Component {
                           onChange={this.onChange}
                         />
                         {errors.password2 && (
-                          <div className="invalid-feedback">
-                            {errors.password2}
-                          </div>
+                          <div className="invalid-feedback">{errors.password2}</div>
                         )}
                       </div>
 
-                      <input
-                        type="submit"
-                        value="Sign Up"
-                        className="btn btn-primary shadow-2 mb-4"
-                      />
+                      {/* Admin-only: Department field */}
+                      {role === "admin" && (
+                        <div className="input-group mb-2">
+                          <div className="input-group-prepend">
+                            <span className="input-group-text">
+                              <i className="feather icon-briefcase" />
+                            </span>
+                          </div>
+                          <input
+                            type="text"
+                            name="department"
+                            className="form-control"
+                            placeholder="Department (Admin Only)"
+                            value={this.state.department}
+                            onChange={this.onChange}
+                          />
+                        </div>
+                      )}
+
+                      {/* Instructor-only: LinkedIn field */}
+                      {role === "instructor" && (
+                        <div className="input-group mb-2">
+                          <div className="input-group-prepend">
+                            <span className="input-group-text">
+                              <i className="feather icon-link" />
+                            </span>
+                          </div>
+                          <input
+                            type="text"
+                            name="linkedin"
+                            className="form-control"
+                            placeholder="LinkedIn Profile (Instructor Only)"
+                            value={this.state.linkedin}
+                            onChange={this.onChange}
+                          />
+                        </div>
+                      )}
+
+                      <button className="btn btn-primary shadow-2 mb-4" type="submit">
+                        Sign Up
+                      </button>
                     </form>
 
                     <p className="mb-2">
                       Already have an account?{" "}
                       <a
-                        href={`${process.env.PUBLIC_URL}/login/${this.props.match.params.role}`}
+                        href={`/login/${role}`}
                         className="f-w-400"
                       >
                         Log in
