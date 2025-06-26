@@ -1,25 +1,25 @@
 const express = require("express");
-const router = express.Router(); // ✅ ADD THIS
+const router = express.Router();
 const coursemodel = require("../../models/Course.js");
 const lecturemodel = require("../../models/Lecture.js");
-const mongoose = require("mongoose");
 const path = require("path");
-const fileUpload = require("express-fileupload");
 
-/* ======================
-   GET: Fetch Lectures
-====================== */
+// =========================
+// GET: Fetch Lectures
+// =========================
 router.get("/lectures", function (req, res) {
+  const courseId = req.query.course;
+
   lecturemodel
-    .find({ course: req.query.id })
+    .find({ course: courseId })
     .populate({ path: "course", model: "courses", select: "courseDescription" })
     .then((doc) => res.json(doc))
-    .catch((err) => res.status(500).json(err));
+    .catch((err) => res.status(500).json({ error: "Failed to fetch lectures", details: err.message }));
 });
 
-/* ================================
-   POST: Local File Video Upload
-================================ */
+// =========================
+// POST: Local File Upload
+// =========================
 router.post("/lectures/localupload", async (req, res) => {
   try {
     const { course, title } = req.body;
@@ -50,9 +50,9 @@ router.post("/lectures/localupload", async (req, res) => {
   }
 });
 
-/* ================================
-   POST: YouTube Video Upload
-================================ */
+// =========================
+// POST: YouTube Upload
+// =========================
 router.post("/lectures/youtube", async (req, res) => {
   try {
     const { course, title, videoLink } = req.body;
@@ -80,4 +80,4 @@ router.post("/lectures/youtube", async (req, res) => {
   }
 });
 
-module.exports = router; // ✅ Don't forget this!
+module.exports = router;

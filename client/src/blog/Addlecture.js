@@ -50,14 +50,6 @@ export default class AddLecture extends Component {
     return true;
   };
 
-  maxSelectFile = (event) => {
-    if (event.target.files.length > 3) {
-      toast.warn("Only 3 files can be uploaded at a time");
-      return false;
-    }
-    return true;
-  };
-
   checkFileSize = (event) => {
     const maxSize = 2000000000; // 2GB
     const files = event.target.files;
@@ -71,11 +63,7 @@ export default class AddLecture extends Component {
   };
 
   onChangeHandler = (event) => {
-    if (
-      this.maxSelectFile(event) &&
-      this.checkMimeType(event) &&
-      this.checkFileSize(event)
-    ) {
+    if (this.checkMimeType(event) && this.checkFileSize(event)) {
       this.setState({ selectedFile: event.target.files, loaded: 0 });
     } else {
       event.target.value = null;
@@ -90,26 +78,28 @@ export default class AddLecture extends Component {
       return;
     }
 
-    // Upload YouTube Link
+    // Upload YouTube link
     if (youtubelink.trim() !== "") {
       const payload = { course, title, videoLink: youtubelink };
 
       axios
         .post("http://localhost:5001/api/lecture/lectures/youtube", payload)
-        .then(() => toast.success("YouTube link uploaded successfully"))
+        .then(() => {
+          toast.success("YouTube link uploaded successfully");
+          this.resetForm();
+        })
         .catch((error) => {
           console.error("Upload error:", error.response?.data || error.message);
           toast.error("Upload failed: YouTube");
         });
     }
-    // Upload Local File
+
+    // Upload local video file
     else if (selectedFile && selectedFile.length > 0) {
       const data = new FormData();
       data.append("course", course);
       data.append("title", title);
-      for (let x = 0; x < selectedFile.length; x++) {
-        data.append("file", selectedFile[x]);
-      }
+      data.append("file", selectedFile[0]); // Only take first file
 
       axios
         .post("http://localhost:5001/api/lecture/lectures/localupload", data, {
@@ -119,7 +109,10 @@ export default class AddLecture extends Component {
             });
           }
         })
-        .then(() => toast.success("File uploaded successfully"))
+        .then(() => {
+          toast.success("Video file uploaded successfully");
+          this.resetForm();
+        })
         .catch((error) => {
           console.error("Upload failed:", error.response?.data || error.message);
           toast.error("Upload failed: File");
@@ -127,11 +120,17 @@ export default class AddLecture extends Component {
     } else {
       toast.error("Please upload a file or provide a YouTube link");
     }
+  };
 
-    // Optional page refresh
-    setTimeout(() => {
-      window.location.reload();
-    }, 1300);
+  resetForm = () => {
+    this.setState({
+      selectedFile: null,
+      youtubelink: "",
+      loaded: 0,
+      course: "",
+      title: ""
+    });
+    setTimeout(() => window.location.reload(), 1300);
   };
 
   render() {
@@ -176,7 +175,6 @@ export default class AddLecture extends Component {
                     type="file"
                     name="file"
                     className="form-control"
-                    multiple
                     onChange={this.onChangeHandler}
                   />
                 </div>

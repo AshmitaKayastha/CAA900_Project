@@ -32,6 +32,7 @@ class BlogDetailsLeftSidebar extends Component {
       course: this.props.match.params.id,
       approved: true
     };
+
     if (this.state.buttonclass === "btn btn-success") {
       axios
         .post("http://localhost:5001/enrollbystudent/add", newTodo)
@@ -56,14 +57,24 @@ class BlogDetailsLeftSidebar extends Component {
     }
 
     try {
+      // ✅ Fetch lecture videos
       const videoRes = await axios.get(
-        `http://localhost:5001/lectures?course=${this.props.match.params.id}`
+        `http://localhost:5001/api/lecture/lectures?course=${this.props.match.params.id}`
       );
 
+      // ✅ Fixed enrollment check API call
       const enrollRes = await axios.get(
-        `http://localhost:5001/checkenrollment?id=${this.state.user}&&courseid=${this.props.match.params.id}`
+        `http://localhost:5001/api/enrollment/checkenrollment`,
+        {
+          params: {
+            id: this.state.user,
+            courseid: this.props.match.params.id
+          },
+          withCredentials: true
+        }
       );
 
+      // ✅ Update button if enrolled
       if (enrollRes.data) {
         this.setState({
           enrolled: "ALREADY ENROLLED",
@@ -71,6 +82,7 @@ class BlogDetailsLeftSidebar extends Component {
         });
       }
 
+      // ✅ Update video and status
       this.setState({
         videos: videoRes.data,
         selectedVideo: videoRes.data[0],
