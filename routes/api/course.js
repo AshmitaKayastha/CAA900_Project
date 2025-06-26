@@ -10,17 +10,20 @@ const catmodel = require("../../models/Category");
 // @access  Public or Protected based on your auth logic
 router.post("/add", async (req, res) => {
   try {
-    const { title, description, category, instructor } = req.body;
-    if (!title || !description || !category || !instructor) {
+    const { courseName, courseDescription, category, instructor } = req.body;
+
+    if (!courseName || !courseDescription || !category || !instructor) {
       return res.status(400).json("Missing course data.");
     }
 
-    // Convert category name to ObjectId
+    // Find category by name (or change to _id if needed)
     const categoryDoc = await catmodel.findOne({ categoryName: category });
     if (!categoryDoc) return res.status(400).json("Invalid category");
 
     const newCourse = new coursemodel({
-      ...req.body,
+      courseName,
+      courseDescription,
+      instructor,
       category: categoryDoc._id
     });
 

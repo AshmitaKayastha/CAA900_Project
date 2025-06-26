@@ -27,7 +27,7 @@ export default class AddLecture extends Component {
   componentDidMount() {
     const instructorId = this.props.match.params.id;
     axios
-      .get(`http://localhost:5001/api/course/coursebyinstructor?id=${instructorId}`)
+      .get(`http://localhost:5001/api/course/instructor/${instructorId}`)
       .then((response) => this.setState({ Courses: response.data }))
       .catch(() => toast.error("Failed to load courses"));
   }
