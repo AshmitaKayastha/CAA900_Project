@@ -5,47 +5,53 @@ const coursemodel = require("../../models/Course");
 const usermodel = require("../../models/User");
 const catmodel = require("../../models/Category");
 
-
-// ==============================================
-// ✅ Add a new course
-// ==============================================
+// @route   POST /api/course/add
+// @desc    Add a new course
+// @access  Public or Protected based on your auth logic
 router.post("/add", async (req, res) => {
   try {
-    if (!req.body || !req.body.category || !req.body.instructor) {
+    const { courseName, courseDescription, category, instructor } = req.body;
+
+    if (!courseName || !courseDescription || !category || !instructor) {
       return res.status(400).json("Missing course data.");
     }
 
-    // Resolve category ID from category name
-    const category = await catmodel.findOne({ categoryName: req.body.category });
-    if (category) {
-      req.body.category = category._id;
-    }
+    // Find category by name (or change to _id if needed)
+    const categoryDoc = await catmodel.findOne({ categoryName: category });
+    if (!categoryDoc) return res.status(400).json("Invalid category");
 
-    const newCourse = new coursemodel(req.body);
+    const newCourse = new coursemodel({
+      courseName,
+      courseDescription,
+      instructor,
+      category: categoryDoc._id
+    });
+
     const savedCourse = await newCourse.save();
     return res.status(200).json(savedCourse);
   } catch (err) {
+    console.error("Add course error:", err);
     return res.status(500).json({ error: "Failed to add course", details: err });
   }
 });
 
-// ==============================================
-// ✅ Get all courses (for admin/instructor dashboard)
-// ==============================================
-router.get("/courses", (req, res, next) => {
+// @route   GET /api/course/courses
+// @desc    Get all courses (with populated category and instructor)
+// @access  Public
+router.get("/courses", (req, res) => {
   coursemodel
     .find()
     .populate("category", "categoryName")
     .populate("instructor", "first_name last_name email role")
     .exec((err, results) => {
-      if (err) return next(err);
+      if (err) return res.status(500).json({ error: "Fetch failed", details: err });
       res.json(results);
     });
 });
 
-// ==============================================
-// ✅ Get all courses (for student/public view)
-// ==============================================
+// @route   GET /api/course/all
+// @desc    Get all raw courses (no populate)
+// @access  Public
 router.get("/all", async (req, res) => {
   try {
     const courses = await coursemodel.find({});
@@ -55,9 +61,9 @@ router.get("/all", async (req, res) => {
   }
 });
 
-// ==============================================
-// ✅ Get single course by ID
-// ==============================================
+// @route   GET /api/course/course?id=...
+// @desc    Get course by ID (query param version)
+// @access  Public
 router.get("/course", async (req, res) => {
   try {
     const course = await coursemodel.findById(req.query.id);
@@ -68,25 +74,42 @@ router.get("/course", async (req, res) => {
   }
 });
 
-// ==============================================
-// ✅ Get courses by instructor ID
-// ==============================================
-router.get("/coursebyinstructor", async (req, res) => {
+// @route   GET /api/course/:id
+// @desc    Get course by ID (RESTful version)
+// @access  Public
+router.get("/:id", async (req, res) => {
   try {
-    const courses = await coursemodel.find({ instructor: req.query.id });
+    const course = await coursemodel
+      .findById(req.params.id)
+      .populate("category", "categoryName")
+      .populate("instructor", "first_name last_name email role");
+
+    if (!course) return res.status(404).json("Course not found");
+    return res.json(course);
+  } catch (err) {
+    return res.status(500).json({ error: "Fetch by ID failed", details: err });
+  }
+});
+
+// @route   GET /api/course/instructor/:id
+// @desc    Get courses by instructor ID
+// @access  Public
+router.get("/instructor/:id", async (req, res) => {
+  try {
+    const courses = await coursemodel.find({ instructor: req.params.id });
     return res.json(courses);
   } catch (err) {
     return res.status(500).json({ error: "Fetch by instructor failed", details: err });
   }
 });
 
-// ==============================================
-// ✅ Update a course
-// ==============================================
-router.put("/course", async (req, res) => {
+// @route   PUT /api/course/:id
+// @desc    Update course by ID
+// @access  Public or Protected
+router.put("/:id", async (req, res) => {
   try {
-    const updated = await coursemodel.findOneAndUpdate(
-      { _id: req.query.id },
+    const updated = await coursemodel.findByIdAndUpdate(
+      req.params.id,
       req.body,
       { new: true }
     );
@@ -97,12 +120,12 @@ router.put("/course", async (req, res) => {
   }
 });
 
-// ==============================================
-// ✅ Delete a course
-// ==============================================
-router.delete("/course", async (req, res) => {
+// @route   DELETE /api/course/:id
+// @desc    Delete course by ID
+// @access  Public or Protected
+router.delete("/:id", async (req, res) => {
   try {
-    const deleted = await coursemodel.findOneAndDelete({ _id: req.query.id });
+    const deleted = await coursemodel.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json("Course not found");
     return res.json(deleted);
   } catch (err) {

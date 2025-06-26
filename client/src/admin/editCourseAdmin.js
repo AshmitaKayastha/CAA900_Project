@@ -17,7 +17,7 @@ export default class EditCourse extends Component{
     }
     componentDidMount() {
        
-        axios.get('http://localhost:5001/course?id='+this.props.match.params.id)
+        axios.get('http://localhost:5001/api/course?id='+this.props.match.params.id)
             .then(response => {
                 this.setState({ todos: response.data });
             })
@@ -25,7 +25,7 @@ export default class EditCourse extends Component{
                 console.log(error);
             })
 
-        axios.get('http://localhost:5001/categories/')
+        axios.get('http://localhost:5001/api/categories/')
         .then(response => {
             this.setState({ Cat: response.data });
         })

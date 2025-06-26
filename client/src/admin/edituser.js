@@ -23,7 +23,7 @@ export default class UserEdit extends Component {
     // To retrieve the todos data from the database --> use the componentDidMount lifecycle method
     componentDidMount() {
        
-        axios.get('http://localhost:5001/user?id='+this.props.match.params.id)
+        axios.get('http://localhost:5001/api/users?id='+this.props.match.params.id)
             .then(response => {
                 this.setState({ todos: response.data });
             })

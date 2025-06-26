@@ -13,7 +13,7 @@ export default class CatEdit extends Component {
   // To retrieve the todos data from the database --> use the componentDidMount lifecycle method
   componentDidMount() {
     axios
-      .get("http://localhost:5001/category?id=" + this.props.match.params.id)
+      .get("http://localhost:5001/api/category?id=" + this.props.match.params.id)
       .then(response => {
         this.setState({ todos: response.data });
       })

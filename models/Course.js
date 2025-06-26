@@ -11,8 +11,16 @@ const CourseSchema = new Schema(
       type: String,
       required: true
     },
-    instructor: { type: Schema.Types.ObjectId, ref: "User" },
-    category: { type: Schema.Types.String, ref: "Category" }
+    instructor: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      required: true
+    }
   },
   { timestamps: { createdAt: "created_at" } }
 );

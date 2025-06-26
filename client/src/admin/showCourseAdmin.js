@@ -20,7 +20,7 @@ export default class UserList extends Component {
   componentDidMount() {
     //to get data from mongo link
     axios
-      .get("http://localhost:5001/courses/")
+      .get("http://localhost:5001/api/courses/")
       .then(response => {
         this.setState({ todos: response.data });
       })

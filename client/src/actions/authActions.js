@@ -3,14 +3,13 @@ import setAuthToken from "../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
 import { GET_ERRORS, SET_CURRENT_USER } from "./types";
 
-// Base API URL
 const API_URL = "http://localhost:5001/api/users";
 
 // REGISTER User
 export const registerUser = (userData, history) => dispatch => {
   axios
     .post(`${API_URL}/register`, userData)
-    .then(res => history.push("/login"))
+    .then(() => history.push("/login"))
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
@@ -26,10 +25,10 @@ export const loginUser = userData => dispatch => {
     .then(res => {
       const { token } = res.data;
 
-      // Save token to localStorage
+      // ✅ Save raw token (no Bearer)
       localStorage.setItem("jwtToken", token);
 
-      // Set token to Auth header
+      // ✅ Set token in axios headers as Bearer
       setAuthToken(token);
 
       // Decode token
@@ -39,14 +38,10 @@ export const loginUser = userData => dispatch => {
       dispatch(setCurrentUser(decoded));
     })
     .catch(err => {
-      let errors = {};
-      if (err.response && err.response.data) {
-        errors = typeof err.response.data === "object"
+      const errors =
+        err.response?.data && typeof err.response.data === "object"
           ? err.response.data
-          : { general: err.response.data };
-      } else {
-        errors = { general: "Login failed. Please try again." };
-      }
+          : { general: "Login failed. Please try again." };
 
       dispatch({
         type: GET_ERRORS,
@@ -55,22 +50,15 @@ export const loginUser = userData => dispatch => {
     });
 };
 
-// SET current user
-export const setCurrentUser = decoded => {
-  return {
-    type: SET_CURRENT_USER,
-    payload: decoded
-  };
-};
+// Set current user
+export const setCurrentUser = decoded => ({
+  type: SET_CURRENT_USER,
+  payload: decoded
+});
 
-// LOGOUT user
+// Logout user
 export const logoutUser = () => dispatch => {
-  // Remove token from localStorage
   localStorage.removeItem("jwtToken");
-
-  // Remove Auth header
   setAuthToken(false);
-
-  // Clear user from Redux store
   dispatch(setCurrentUser({}));
 };

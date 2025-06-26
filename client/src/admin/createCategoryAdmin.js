@@ -42,7 +42,7 @@ export default class CreateCategory extends Component {
             // todo_completed: this.state.todo_completed
         };
 
-        axios.post('http://localhost:5001/category/add', newTodo)
+        axios.post('http://localhost:5001/api/category/add', newTodo)
         .then((result) => {
             this.props.history.push("/ShowCategoryList/")
           });

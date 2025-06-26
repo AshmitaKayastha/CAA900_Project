@@ -22,7 +22,7 @@ export default class EnrollList extends Component {
   componentDidMount() {
     //to get data from mongo link
     axios
-      .get("http://localhost:5001/enrollments/")
+      .get("http://localhost:5001/api/enrollment/")
       .then(response => {
         this.setState({ todos: response.data });
       })
