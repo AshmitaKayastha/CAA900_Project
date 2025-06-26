@@ -6,6 +6,7 @@ let router = express.Router();
 
 
 // ✅ Get all enrollments
+
 router.get("/enrollments", (req, res, next) => {
   enrollmodel
     .find()
@@ -36,6 +37,8 @@ router.get("/enrollmentbystudentid/:id", (req, res) => {
 });
 
 // ✅ Check if student is enrolled in a course
+
+
 router.get("/checkenrollment", (req, res) => {
   enrollmodel
     .findOne({
