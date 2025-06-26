@@ -15,12 +15,13 @@ const validateLoginInput = require("../../validation/login");
 // @route   POST /api/users/register
 // @desc    Register a new user
 // @access  Public
-router.post("/register", (req, res) => {
+router.post("/register", async (req, res) => {
   const { errors, isValid } = validateRegisterInput(req.body);
   if (!isValid) return res.status(400).json(errors);
 
-  User.findOne({ email: req.body.email }).then(user => {
-    if (user) {
+  try {
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) {
       errors.email = "Email already exists";
       return res.status(400).json(errors);
     }
@@ -41,16 +42,26 @@ router.post("/register", (req, res) => {
     });
 
     bcrypt.genSalt(10, (err, salt) => {
-      bcrypt.hash(newUser.password, salt, (err, hash) => {
-        if (err) throw err;
+      if (err) return res.status(500).json({ error: "Salt generation failed" });
+
+      bcrypt.hash(newUser.password, salt, async (err, hash) => {
+        if (err) return res.status(500).json({ error: "Password hashing failed" });
+
         newUser.password = hash;
-        newUser
-          .save()
-          .then(user => res.json(user))
-          .catch(err => res.status(500).json({ error: "Saving user failed" }));
+
+        try {
+          const savedUser = await newUser.save();
+          res.json(savedUser);
+        } catch (saveError) {
+          console.error("User save error:", saveError);
+          res.status(500).json({ error: "Saving user failed" });
+        }
       });
     });
-  });
+  } catch (err) {
+    console.error("Registration error:", err);
+    res.status(500).json({ error: "Server error during registration" });
+  }
 });
 
 // @route   POST /api/users/login

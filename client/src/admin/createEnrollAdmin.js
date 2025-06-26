@@ -33,7 +33,7 @@ export default class CreateEnroll extends Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:5001/courses/")
+      .get("http://localhost:5001/api/courses/")
       .then(response => {
         this.setState({ Course: response.data });
       })
@@ -42,7 +42,7 @@ export default class CreateEnroll extends Component {
       });
 
     axios
-      .get("http://localhost:5001/users/")
+      .get("http://localhost:5001/api/users/")
       .then(response => {
         this.setState({ User: response.data });
       })
