@@ -1,197 +1,133 @@
 import React, { Component } from "react";
 import NavBar from "../components/NavBar";
-import CanvasJSReact from "../canvas/canvasjs.react"
-
+import CanvasJSReact from "../canvas/canvasjs.react";
 import axios from "axios";
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-var dd=[];
 class Dashboard extends Component {
-    constructor(props) {
-        super(props);
-        // initialize the state with an empty todos array
-        this.state = {c1: [],c2:[],c3:[]
-                   
-        };
-    }
-	getCoursedata(){
-		axios.get('http://localhost:5001/api/course/')
-            .then(response => {
-				
-				var dict={};
-				dd=[];
-				response.data.forEach(element => {
-					//console.log(element);
-					if( dict[element.instructor.email] == undefined){
-						dict[element.instructor.email] = 1;
-					}
-					else{
-						dict[element.instructor.email] += 1;
-					}
-					
-				});
-				
-				for( var k in dict){
-					dd.push({ y : dict[k], label: k })
-				}
-				console.log(dd);
-				
-				this.setState({ c1: dd });
-				dd=[]
-				dict={}
+  constructor(props) {
+    super(props);
+    this.state = {
+      c1: [],
+      c2: [],
+      c3: []
+    };
+  }
 
+  getAuthHeaders() {
+    const token = localStorage.getItem("jwtToken");
+    return {
+      headers: { Authorization: token }
+    };
+  }
 
-				response.data.forEach(element => {
-					//console.log(element);label
-					if( dict[element.category.categoryName] == undefined){
-						dict[element.category.categoryName] = 1;
-					}
-					else{
-						dict[element.category.categoryName] += 1;
-					}
-					
-				});
-				
-				for( var k in dict){
-					dd.push({ y : dict[k], name: k })
-				}
-				console.log(dd);
-				
-				this.setState({ c3: dd });
-            })
-            .catch(function (error){
-                console.log(error);
-            })
-	}
+  getCoursedata() {
+    axios.get("http://localhost:5001/api/course", this.getAuthHeaders())
+      .then(response => {
+        let instructorMap = {};
+        let categoryMap = {};
 
-	getEnrollmentdata(){
-		axios.get('http://localhost:5001/api/enrollment/')
-            .then(response => {
-				
-				var dict={};
-				dd=[];
-				response.data.forEach(element => {
-					//console.log(element);
-					if( dict[element.course.courseName] == undefined){
-						dict[element.course.courseName] = 1;
-					}
-					else{
-						dict[element.course.courseName] += 1;
-					}
-					
-				});
-				
-				for( var k in dict){
-					dd.push({ y : dict[k], label: k })
-				}
-				console.log(dd);
-				this.setState({ c2: dd });
-            })
-            .catch(function (error){
-                console.log(error);
-            })
-	}
+        response.data.forEach(element => {
+          const instructorEmail = element.instructor?.email || "Unknown";
+          const categoryName = element.category?.categoryName || "Uncategorized";
 
-	
+          instructorMap[instructorEmail] = (instructorMap[instructorEmail] || 0) + 1;
+          categoryMap[categoryName] = (categoryMap[categoryName] || 0) + 1;
+        });
 
-    componentDidMount() {
-        
-			this.getCoursedata()
-			this.getEnrollmentdata()
-        
-       
-    }
-    
-      
-	render() {
-		
-		const options1 = {
-			exportEnabled: true,
-			animationEnabled: true,
-			title: {
-				text: "Courses Per Instructor"
-			},
-			data: [{
-				type: "pie",
-				startAngle: 75,
-				toolTipContent: "<b>{label}</b>: {y}",
-				showInLegend: "true",
-				legendText: "{label}",
-				indexLabelFontSize: 16,
-				indexLabel: "{label} - {y}",
-				dataPoints: this.state.c1                                                                
+        const c1Data = Object.keys(instructorMap).map(k => ({ y: instructorMap[k], label: k }));
+        const c3Data = Object.keys(categoryMap).map(k => ({ y: categoryMap[k], name: k }));
 
-			}]
-		}
+        this.setState({ c1: c1Data, c3: c3Data });
+      })
+      .catch(error => {
+        console.error("Error fetching course data:", error);
+      });
+  }
 
-		const options2 = {
-			exportEnabled: true,
-			animationEnabled: true,
-			title: {
-				text: "Students Per Course"
-			},
-			data: [
-			{
-				// Change type to "doughnut", "line", "splineArea", etc.
-				type: "column",
-				dataPoints: this.state.c2
-			}
-			]
-		}
+  getEnrollmentdata() {
+    axios.get("http://localhost:5001/api/enrollment", this.getAuthHeaders())
+      .then(response => {
+        let enrollmentMap = {};
 
-		const options3 = {
-			exportEnabled: true,
-			animationEnabled: true,
-			
-			title: {
-				text: "Courses Per Category"
-			},
-			subtitles: [{
-				
-				verticalAlign: "center",
-				fontSize: 24,
-				dockInsidePlotArea: true
-			}],
-			data: [{
-				type: "doughnut",
-				showInLegend: true,
-				indexLabel: "{name}: {y}",
-				yValueFormatString: "#,###",
-				dataPoints:this.state.c3
-			}]
-		}
+        response.data.forEach(element => {
+          const courseName = element.course?.courseName || "Unnamed Course";
+          enrollmentMap[courseName] = (enrollmentMap[courseName] || 0) + 1;
+        });
 
-		return (
+        const c2Data = Object.keys(enrollmentMap).map(k => ({ y: enrollmentMap[k], label: k }));
+        this.setState({ c2: c2Data });
+      })
+      .catch(error => {
+        console.error("Error fetching enrollment data:", error);
+      });
+  }
+
+  componentDidMount() {
+    this.getCoursedata();
+    this.getEnrollmentdata();
+  }
+
+  render() {
+    const options1 = {
+      exportEnabled: true,
+      animationEnabled: true,
+      title: { text: "Courses Per Instructor" },
+      data: [{
+        type: "pie",
+        startAngle: 75,
+        toolTipContent: "<b>{label}</b>: {y}",
+        showInLegend: true,
+        legendText: "{label}",
+        indexLabelFontSize: 16,
+        indexLabel: "{label} - {y}",
+        dataPoints: this.state.c1
+      }]
+    };
+
+    const options2 = {
+      exportEnabled: true,
+      animationEnabled: true,
+      title: { text: "Students Per Course" },
+      data: [{ type: "column", dataPoints: this.state.c2 }]
+    };
+
+    const options3 = {
+      exportEnabled: true,
+      animationEnabled: true,
+      title: { text: "Courses Per Category" },
+      subtitles: [{ verticalAlign: "center", fontSize: 24, dockInsidePlotArea: true }],
+      data: [{
+        type: "doughnut",
+        showInLegend: true,
+        indexLabel: "{name}: {y}",
+        yValueFormatString: "#,###",
+        dataPoints: this.state.c3
+      }]
+    };
+
+    return (
       <div>
         <NavBar />
-     
-			<div className='container'>
-				<tr className='row'>
-		<th className="col-md-6">
-			<CanvasJSChart options = {options1}
-				/* onRef={ref => this.chart = ref} */
-			/>
-			</th>
-		<th className="col-md-6">
-			<CanvasJSChart options = {options3}
-				/* onRef={ref => this.chart = ref} */
-			/>
-		</th>
-		</tr>	
-		<br></br>
-		<div className="row">
-			<CanvasJSChart options = {options2}
-				/* onRef={ref => this.chart = ref} */
-			/>
-			{/*You can get reference to the chart instance as shown above using onRef. This allows you to access all chart properties and methods*/}
-		</div>
-    </div>
-		</div>
-		);
-	}
+        <div className='container'>
+          <div className='row'>
+            <div className="col-md-6">
+              <CanvasJSChart options={options1} />
+            </div>
+            <div className="col-md-6">
+              <CanvasJSChart options={options3} />
+            </div>
+          </div>
+          <br />
+          <div className="row">
+            <CanvasJSChart options={options2} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
-
 
 export default Dashboard;

@@ -61,22 +61,16 @@ import Profile from "./components/profile/Profile";
 import FinalDashboard from "./components/FinalDashboard";
 import FinalProfiles from "./components/FinalProfiles";
 
-// ===============================
-// ✅ JWT Authentication Setup
-// ===============================
+
 if (localStorage.jwtToken) {
   const token = localStorage.jwtToken;
 
-  // Set auth header
   setAuthToken(token);
 
-  // Decode token
   const decoded = jwt_decode(token);
 
-  // Set current user
   store.dispatch(setCurrentUser(decoded));
 
-  // Check for token expiration
   const currentTime = Date.now() / 1000;
   if (decoded.exp < currentTime) {
     store.dispatch(logoutUser());
@@ -85,9 +79,7 @@ if (localStorage.jwtToken) {
   }
 }
 
-// ===============================
-// ✅ Main App Component
-// ===============================
+
 class Root extends Component {
   render() {
     return (
@@ -105,6 +97,7 @@ class Root extends Component {
             <Route exact path="/finalprofiles" component={FinalProfiles} />
             <Route exact path="/profile/:handle" component={Profile} />
             <Route exact path="/admin" component={Dashboard} />
+
 
 
 
