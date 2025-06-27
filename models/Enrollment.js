@@ -1,22 +1,17 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const EnrollmentSchema = new Schema(
-  {
-    no: {
-      type: Number,
-      default: 1,
-      required: false
-    },
-    student: { type: Schema.Types.ObjectId, ref: "User" },
-    course: { type: Schema.Types.ObjectId, ref: "Course" },
-    approved: {
-      type: Boolean,
-      default: true,
-      required: false
-    }
+const EnrollmentSchema = new Schema({
+  student: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
   },
-  { timestamps: { createdAt: "created_at" } }
-);
+  course: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Course",
+    required: true
+  }
+});
 
-module.exports = Enrollment = mongoose.model("enrollments", EnrollmentSchema);
+module.exports = mongoose.model("Enrollment", EnrollmentSchema);

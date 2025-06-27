@@ -21,33 +21,33 @@ class BlogDetailsLeftSidebar extends Component {
       addcourse: false,
       status: "Loading..."
     };
-
     this.onClick = this.onClick.bind(this);
   }
 
   onClick(e) {
     e.preventDefault();
-    const newTodo = {
+
+    const newEnrollment = {
       student: this.state.user,
-      course: this.props.match.params.id,
-      approved: true
+      course: this.props.match.params.id
     };
 
     if (this.state.buttonclass === "btn btn-success") {
       axios
-        .post("http://localhost:5001/enrollbystudent/add", newTodo)
+        .post("http://localhost:5001/api/enrollment/enrollbystudent/add", newEnrollment)
         .then(() => {
-          toast.success("Added successfully");
+          toast.success("Course successfully added to your list");
           this.setState({
             enrolled: "ALREADY ENROLLED",
             buttonclass: "btn btn-danger"
           });
         })
-        .catch(() => {
+        .catch((err) => {
+          console.error("Enrollment error:", err);
           toast.error("Course not added");
         });
     } else {
-      toast.error("Course already added");
+      toast.warn("Course already enrolled");
     }
   }
 
@@ -57,24 +57,19 @@ class BlogDetailsLeftSidebar extends Component {
     }
 
     try {
-      // ✅ Fetch lecture videos
+      const courseId = this.props.match.params.id;
+
+      // Fetch lectures
       const videoRes = await axios.get(
-        `http://localhost:5001/api/lecture/lectures?course=${this.props.match.params.id}`
+        `http://localhost:5001/api/lecture/lectures?course=${courseId}`
       );
 
-      // ✅ Fixed enrollment check API call
-      const enrollRes = await axios.get(
-        `http://localhost:5001/api/enrollment/checkenrollment`,
-        {
-          params: {
-            id: this.state.user,
-            courseid: this.props.match.params.id
-          },
-          withCredentials: true
-        }
-      );
+      // Check enrollment
+      const enrollRes = await axios.get("http://localhost:5001/api/enrollment/checkenrollment", {
+        params: { id: this.state.user, courseid: courseId },
+        withCredentials: true
+      });
 
-      // ✅ Update button if enrolled
       if (enrollRes.data) {
         this.setState({
           enrolled: "ALREADY ENROLLED",
@@ -82,19 +77,18 @@ class BlogDetailsLeftSidebar extends Component {
         });
       }
 
-      // ✅ Update video and status
       this.setState({
         videos: videoRes.data,
-        selectedVideo: videoRes.data[0],
+        selectedVideo: videoRes.data[0] || null,
         status: videoRes.data.length > 0 ? "" : "No videos found."
       });
     } catch (error) {
-      console.error("Error fetching data", error);
+      console.error("Error loading data:", error);
       this.setState({ status: "Error loading videos." });
     }
   }
 
-  onVideoSelect = video => {
+  onVideoSelect = (video) => {
     this.setState({ selectedVideo: video });
   };
 
@@ -103,7 +97,6 @@ class BlogDetailsLeftSidebar extends Component {
       <div>
         <NavBar />
 
-        {/* Breadcrumb */}
         <div className="breadcrumb-area breadcrumb-bg">
           <div className="container">
             <div className="row">
@@ -116,7 +109,6 @@ class BlogDetailsLeftSidebar extends Component {
           </div>
         </div>
 
-        {/* Course Detail Page */}
         <div className="page-wrapper section-space--inner--120">
           <div className="project-section">
             <div className="container">
@@ -128,7 +120,6 @@ class BlogDetailsLeftSidebar extends Component {
                         <div className="eleven wide column">
                           <VideoDetail video={this.state.selectedVideo} />
                         </div>
-
                         <div className="five wide column">
                           <VideoList
                             onVideoSelect={this.onVideoSelect}
