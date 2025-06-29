@@ -6,21 +6,37 @@ const coursemodel = require("../../models/Course.js");
 const lecturemodel = require("../../models/Lecture.js");
 
 // =========================
-// GET: Fetch Lectures by Course ID
+// GET: Fetch Lectures by Course ID (Sorted by Created Date)
 // =========================
 router.get("/lectures", async (req, res) => {
   try {
     const courseId = req.query.course;
     const lectures = await lecturemodel
       .find({ course: courseId })
+      .sort({ createdAt: 1 })
       .populate({ path: "course", model: "Course", select: "courseDescription" });
 
     res.json(lectures);
   } catch (err) {
     res.status(500).json({
       error: "Failed to fetch lectures",
-      details: err.message
+      details: err.message,
     });
+  }
+});
+
+// =========================
+// GET: Fetch Single Lecture by ID
+// =========================
+router.get("/lectures/:id", async (req, res) => {
+  try {
+    const lecture = await lecturemodel.findById(req.params.id);
+    if (!lecture) {
+      return res.status(404).json({ error: "Lecture not found." });
+    }
+    res.json(lecture);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching lecture", details: err.message });
   }
 });
 
@@ -41,25 +57,20 @@ router.post("/lectures/localupload", async (req, res) => {
     }
 
     const uploadedFile = req.files.file;
-
-    // Prepare uploads directory
     const uploadsDir = path.join(__dirname, "../../uploads");
+
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir);
     }
 
-    // Sanitize filename (remove spaces)
     const cleanFileName = uploadedFile.name.replace(/\s+/g, "_");
     const savePath = path.join(uploadsDir, cleanFileName);
-
-    // Move the file to /uploads
     await uploadedFile.mv(savePath);
 
-    // Save lecture metadata
     const newLecture = new lecturemodel({
       course: foundCourse._id,
       title,
-      videoLink: "/uploads/" + cleanFileName
+      videoLink: "/uploads/" + cleanFileName,
     });
 
     const savedLecture = await newLecture.save();
@@ -91,13 +102,15 @@ router.post("/lectures/youtube", async (req, res) => {
     const videoId = videoIdMatch ? videoIdMatch[1] : null;
 
     if (!videoId) {
-      return res.status(400).json({ error: "Invalid YouTube link." });
+      return res.status(400).json({
+        error: "Invalid YouTube link. Make sure it looks like https://www.youtube.com/watch?v=VIDEO_ID"
+      });
     }
 
     const newLecture = new lecturemodel({
       course: foundCourse._id,
       title,
-      videoLink: videoId
+      videoLink: videoId,
     });
 
     const saved = await newLecture.save();

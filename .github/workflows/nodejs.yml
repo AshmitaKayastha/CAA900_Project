@@ -42,5 +42,18 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Start backend server (server.js)
+        run: |
+          nohup node server.js > server.log 2>&1 &
+          sleep 5
+
+      - name: Check if server is up
+        run: |
+          curl --retry 5 --retry-delay 2 --retry-connrefused http://localhost:5001 || exit 1
+
       - name: Run tests
         run: npm test
+
+      - name: Show server logs if tests fail
+        if: failure()
+        run: cat server.log
