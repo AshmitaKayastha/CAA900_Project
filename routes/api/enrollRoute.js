@@ -37,21 +37,30 @@ router.get("/enrollmentbystudent", async (req, res) => {
   try {
     const enrollments = await enrollmodel
       .find({ student: req.query.id })
-      .populate("course");
+      .populate("course", "courseName courseDescription");
     res.status(200).json(enrollments);
   } catch (err) {
     res.status(500).json({ error: "Fetch by student ID failed", details: err.message });
   }
 });
 
-// ✅ Get enrollments by student (route param)
+// ✅ Get enrollments by student (route param) — FIXED with safe populate
 router.get("/enrollmentbystudentid/:id", async (req, res) => {
   try {
     const enrollments = await enrollmodel
       .find({ student: req.params.id })
-      .populate("course");
-    res.status(200).json(enrollments);
+      .populate({
+        path: "course",
+        select: "courseName courseDescription",
+        strictPopulate: false // Prevent crash if ref is broken
+      });
+
+    // Filter out any enrollments with missing course refs
+    const filtered = enrollments.filter((e) => e.course !== null);
+
+    res.status(200).json(filtered);
   } catch (err) {
+    console.error("Error fetching enrollments by student ID:", err);
     res.status(500).json({ error: "Fetch by student ID failed", details: err.message });
   }
 });

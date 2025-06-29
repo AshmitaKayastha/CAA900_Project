@@ -1,4 +1,6 @@
 const express = require("express");
+const path = require("path");
+
 const mongoose = require("mongoose");
 const cors = require("cors");
 const passport = require("passport");
@@ -35,6 +37,8 @@ app.use(
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 } }));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 
 
 app.use(passport.initialize());
