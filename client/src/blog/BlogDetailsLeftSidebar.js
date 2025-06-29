@@ -131,19 +131,7 @@ class BlogDetailsLeftSidebar extends Component {
                   </div>
                 </div>
 
-                <div className="col-lg-8 col-12 section-space--bottom--30 pl-30 pl-sm-15 pl-xs-15">
-                  <div className="project-details">
-                    <h2>
-                      {this.state.selectedVideo
-                        ? this.state.selectedVideo.title
-                        : this.state.status}
-                    </h2>
-                    <p>
-                      {this.state.selectedVideo?.course?.courseDescription ||
-                        this.state.status}
-                    </p>
-                  </div>
-                </div>
+               
 
                 <div className="col-lg-4">
                   <ToastContainer />

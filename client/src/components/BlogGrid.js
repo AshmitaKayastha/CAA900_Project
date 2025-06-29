@@ -3,9 +3,9 @@ import React, {Component} from 'react';
 class BlogGrid extends Component{
     render(){
         let data = [
-            {img:'1.jpg', date:'AUGUST 4, 2019', title: 'Industry Ministry to Hike', postExcerpt: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe minus, illo error ratione eos ex.…', link:'blog-details-left-sidebar'},
-            {img:'2.jpg', date:'AUGUST 5, 2019', title: 'Worker Safety: India Appeals', postExcerpt: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe minus, illo error ratione eos ex.…', link:'blog-details-left-sidebar'},
-            {img:'3.jpg', date:'AUGUST 6, 2019', title: 'Lorem ipsum dolor sit amet.', postExcerpt: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe minus, illo error ratione eos ex.…', link:'blog-details-left-sidebar'}
+            {img:'1.jpg', date:'June 4, 2025', title: 'Industry Ministry to Hike', postExcerpt: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe minus, illo error ratione eos ex.…', link:'blog-details-left-sidebar'},
+            {img:'2.jpg', date:'June 5, 2025', title: 'Worker Safety: India Appeals', postExcerpt: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe minus, illo error ratione eos ex.…', link:'blog-details-left-sidebar'},
+            {img:'3.jpg', date:'June 6, 2025', title: 'Lorem ipsum dolor sit amet.', postExcerpt: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe minus, illo error ratione eos ex.…', link:'blog-details-left-sidebar'}
       
         ];
 
