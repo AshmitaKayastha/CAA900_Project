@@ -4,6 +4,7 @@ import "./index.scss";
 import { Provider } from "react-redux";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
+
 import store from "./store";
 import setAuthToken from "./utils/setAuthToken";
 import jwt_decode from "jwt-decode";

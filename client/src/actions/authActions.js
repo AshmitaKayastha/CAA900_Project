@@ -5,7 +5,9 @@ import { GET_ERRORS, SET_CURRENT_USER } from "./types";
 
 const API_URL = "http://localhost:5001/api/users";
 
-// REGISTER User
+// ===============================
+// ✅ REGISTER USER
+// ===============================
 export const registerUser = (userData, history) => dispatch => {
   axios
     .post(`${API_URL}/register`, userData)
@@ -18,47 +20,56 @@ export const registerUser = (userData, history) => dispatch => {
     );
 };
 
-// LOGIN User
+// ===============================
+// ✅ LOGIN USER
+// ===============================
 export const loginUser = userData => dispatch => {
   axios
     .post(`${API_URL}/login`, userData)
     .then(res => {
-      const { token } = res.data;
+      let token = res.data.token;
 
-      // ✅ Save raw token (no Bearer)
+      // ✅ Strip "Bearer " if it's already included
+      token = token.replace(/^Bearer\s+/i, "");
+
+      // ✅ Save clean token
       localStorage.setItem("jwtToken", token);
 
-      // ✅ Set token in axios headers as Bearer
-      setAuthToken(token);
+      // ✅ Set Authorization header with proper "Bearer " prefix
+      setAuthToken(token); // setAuthToken will add "Bearer " safely
 
-      // Decode token
+      // ✅ Decode token
       const decoded = jwt_decode(token);
 
-      // Set current user
+      // ✅ Set user in Redux
       dispatch(setCurrentUser(decoded));
     })
-    .catch(err => {
-      const errors =
-        err.response?.data && typeof err.response.data === "object"
-          ? err.response.data
-          : { general: "Login failed. Please try again." };
-
+    .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: errors
-      });
-    });
+        payload: err.response?.data || { general: "Login failed. Please try again." }
+      })
+    );
 };
 
-// Set current user
+// ===============================
+// ✅ SET CURRENT USER
+// ===============================
 export const setCurrentUser = decoded => ({
   type: SET_CURRENT_USER,
   payload: decoded
 });
 
-// Logout user
+// ===============================
+// ✅ LOGOUT USER
+// ===============================
 export const logoutUser = () => dispatch => {
+  // ✅ Remove token from localStorage
   localStorage.removeItem("jwtToken");
+
+  // ✅ Clear Authorization header
   setAuthToken(false);
+
+  // ✅ Clear Redux user
   dispatch(setCurrentUser({}));
 };

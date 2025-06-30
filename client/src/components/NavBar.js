@@ -142,7 +142,7 @@ class NavBar extends Component {
                       <nav className="main-nav">
                         <Link to="/home-two">
                           <div className="logoHead">
-                            <img src="/assets/img/logo/logonew.png" alt="" className="sticky-logo img-fluid" />
+                          {/* <img src="/assets/img/logo/logonew.png" alt="" className="sticky-logo img-fluid" /> */}
                             <h3>E-Learning</h3>
                           </div>
                         </Link>

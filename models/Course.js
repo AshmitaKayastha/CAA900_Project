@@ -25,5 +25,5 @@ const CourseSchema = new Schema(
   { timestamps: { createdAt: "created_at" } }
 );
 
-// ✅ FIXED: Model name should match ref: "Course"
+// ✅ Correct export
 module.exports = mongoose.model("Course", CourseSchema);
