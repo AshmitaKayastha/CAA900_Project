@@ -60,7 +60,7 @@ class Register extends Component {
     if (role === "instructor") newUser.linkedin = this.state.linkedin;
 
     axios
-      .post("/api/users/register", newUser)
+      .post("http://localhost:5001/api/users/register", newUser)
       .then((res) => {
         this.props.history.push(`/login/${role}`);
       })
@@ -74,7 +74,6 @@ class Register extends Component {
   render() {
     const { role } = this.props.match.params;
     const { errors } = this.state;
-
     const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
 
     return (
@@ -253,10 +252,7 @@ class Register extends Component {
 
                     <p className="mb-2">
                       Already have an account?{" "}
-                      <a
-                        href={`/login/${role}`}
-                        className="f-w-400"
-                      >
+                      <a href={`/login/${role}`} className="f-w-400">
                         Log in
                       </a>
                     </p>

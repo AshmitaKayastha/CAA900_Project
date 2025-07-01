@@ -21,7 +21,7 @@ class TestimonialSlider extends Component {
     let data = [
       {
         testimonialImage: "1.jpg",
-        testimonialName: "Yubaraj Ghimire",
+        testimonialName: "Yubaraj Ghimirei",
         testimonialDesignation: "Founder",
         testimonialText:
           "Lorem ipsum dolor sit amet, consectetur adipisi elit sed do eiusmod tempor incididu ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco"

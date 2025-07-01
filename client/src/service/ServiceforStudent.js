@@ -31,38 +31,43 @@ class Services extends Component {
   render() {
     const { data } = this.state;
 
-    const Datalist = data.map((val, i) => (
-      <div
-        className="col-lg-4 col-md-6 col-12 section-space--bottom--30"
-        key={i}
-      >
-        <div className="service-grid-item">
-          <div className="service-grid-item__image">
-            <div className="service-grid-item__image-wrapper">
-              <a
-                href={`${process.env.PUBLIC_URL}/blog-details-left-sidebar/${val.course._id}`}
-              >
-                <img
-                  src={val.course.courseImage}
-                  className="img-fluid"
-                  alt="Service Grid"
-                />
-              </a>
-            </div>
+    const Datalist = data.map((val, i) => {
+      const course = val?.course;
+      if (!course) return null; // Skip broken data
 
-            <div className="service-grid-item__content">
-              <h3 className="title">
+      return (
+        <div
+          className="col-lg-4 col-md-6 col-12 section-space--bottom--30"
+          key={i}
+        >
+          <div className="service-grid-item">
+            <div className="service-grid-item__image">
+              <div className="service-grid-item__image-wrapper">
                 <a
-                  href={`${process.env.PUBLIC_URL}/blog-details-left-sidebar/${val.course._id}`}
+                  href={`${process.env.PUBLIC_URL}/blog-details-left-sidebar/${course._id}`}
                 >
-                  {val.course.courseName}
+                  <img
+                    src={course.courseImage || "/default-image.jpg"}
+                    className="img-fluid"
+                    alt="Course"
+                  />
                 </a>
-              </h3>
+              </div>
+
+              <div className="service-grid-item__content">
+                <h3 className="title">
+                  <a
+                    href={`${process.env.PUBLIC_URL}/blog-details-left-sidebar/${course._id}`}
+                  >
+                    {course.courseName || "Untitled Course"}
+                  </a>
+                </h3>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    ));
+      );
+    });
 
     return (
       <div>
@@ -118,4 +123,3 @@ class Services extends Component {
 }
 
 export default Services;
-   

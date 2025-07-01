@@ -25,4 +25,5 @@ const CourseSchema = new Schema(
   { timestamps: { createdAt: "created_at" } }
 );
 
-module.exports = Course = mongoose.model("courses", CourseSchema);
+// ✅ Correct export
+module.exports = mongoose.model("Course", CourseSchema);

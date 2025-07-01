@@ -13,7 +13,7 @@
         font-weight: 400;
         text-transform: uppercase;
         color: $white;
-        background-color: $theme-color--default;
+        background-color: royalblue;
         transition: $transition--cubic;
 
         &:hover, &:focus{
@@ -34,7 +34,7 @@
     &--round{
         font-size: 13px;
         padding: 15px 50px;
-        background-color: $theme-color--default;
+        background-color: #08113B;
         color: $white;
         border-radius: 100px;
         transition: $transition--cubic;

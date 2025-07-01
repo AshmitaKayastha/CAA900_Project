@@ -8,7 +8,10 @@
     "server": "nodemon server.js",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "test": "echo \"No tests defined\" && exit 0"
+    "test": "echo \"No tests defined\" && exit 0",
+    "build": "REACT_APP_API=http://localhost:5001 react-scripts build"
+
+
   },
   "author": "Ashmita Kayastha",
   "license": "MIT",

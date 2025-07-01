@@ -5,26 +5,24 @@ import Moment from 'react-moment';
 import { deleteEducation } from '../../actions/profileActions';
 
 class Education extends Component {
-  onDeleteClick(id) {
+  onDeleteClick = (id) => {
     this.props.deleteEducation(id);
-  }
+  };
 
   render() {
-    const education = this.props.education.map(edu => (
+    const { education = [] } = this.props;
+
+    const educationRows = education.map((edu) => (
       <tr key={edu._id}>
         <td>{edu.school}</td>
         <td>{edu.degree}</td>
         <td>
-          <Moment format="YYYY/MM/DD">{edu.from}</Moment> -
-          {edu.to === null ? (
-            ' Now'
-          ) : (
-            <Moment format="YYYY/MM/DD">{edu.to}</Moment>
-          )}
+          <Moment format="YYYY/MM/DD">{edu.from}</Moment> -{' '}
+          {edu.to === null ? 'Now' : <Moment format="YYYY/MM/DD">{edu.to}</Moment>}
         </td>
         <td>
           <button
-            onClick={this.onDeleteClick.bind(this, edu._id)}
+            onClick={() => this.onDeleteClick(edu._id)}
             className="btn btn-danger"
           >
             Delete
@@ -32,6 +30,7 @@ class Education extends Component {
         </td>
       </tr>
     ));
+
     return (
       <div>
         <h4 className="mb-4">Education Credentials</h4>
@@ -43,8 +42,8 @@ class Education extends Component {
               <th>Years</th>
               <th />
             </tr>
-            {education}
           </thead>
+          <tbody>{educationRows}</tbody>
         </table>
       </div>
     );
@@ -52,7 +51,8 @@ class Education extends Component {
 }
 
 Education.propTypes = {
-  deleteEducation: PropTypes.func.isRequired
+  deleteEducation: PropTypes.func.isRequired,
+  education: PropTypes.array
 };
 
 export default connect(null, { deleteEducation })(Education);

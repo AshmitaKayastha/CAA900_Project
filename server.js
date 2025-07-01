@@ -1,4 +1,6 @@
 const express = require("express");
+const path = require("path");
+
 const mongoose = require("mongoose");
 const cors = require("cors");
 const passport = require("passport");
@@ -6,14 +8,10 @@ const fileUpload = require("express-fileupload");
 
 const app = express();
 
-// =======================
-// 🔐 MongoDB URI
-// =======================
+
 const db = require("./config/keys").mongoURI;
 
-// =======================
-// 🌐 CORS Setup
-// =======================
+
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
@@ -36,43 +34,34 @@ app.use(
 // =======================
 // 📦 Middleware
 // =======================
-app.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 } }));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 } }));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// =======================
-// 🔐 Passport Setup
-// =======================
+
+
 app.use(passport.initialize());
 require("./config/passport")(passport);
 
-// =======================
-// 🌐 MongoDB Connection
-// =======================
+
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection failed:", err));
 
-// =======================
-// 🚀 Health Check
-// =======================
-app.get("/", (req, res) => res.send("✅ API is running!"));
 
-// =======================
-// 📦 API Routes
-// =======================
+app.get("/", (req, res) => res.send("🌐 API is running!"));
+
+// Mount routes
 app.use("/api/users", require("./routes/api/users"));
 app.use("/api/course", require("./routes/api/course"));
 app.use("/api/category", require("./routes/api/category"));
 app.use("/api/enrollment", require("./routes/api/enrollRoute"));
 app.use("/api/role", require("./routes/api/role"));
-app.use("/api/lecture", require("./routes/api/lecture")); // ✅ lecture route
+app.use("/api/lecture", require("./routes/api/lecture"));
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/instructor", require("./routes/api/instructor"));
 
-// =======================
-// 🖥️ Start Server
-// =======================
 const port = process.env.PORT || 5001;
-app.listen(port, () => console.log(`🚀 Server running on port ${port}`));
+app.listen(port, () => console.log(`🚀 Server running on http://localhost:${port}`));

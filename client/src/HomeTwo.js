@@ -39,7 +39,7 @@ class HomeTwo extends Component {
         {/* Blog grid */}
 
         {/* Footer */}
-        <Footer />
+      {/*  <Footer /> */}
 
         {/* Mobile Menu */}
         <MobileMenu />
