@@ -40,8 +40,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install dependencies safely
+        run: npm install --legacy-peer-deps
+
 
       - name: Start backend server (server.js)
         run: |
