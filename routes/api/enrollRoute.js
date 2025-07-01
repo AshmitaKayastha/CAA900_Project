@@ -6,7 +6,7 @@ const enrollmodel = require("../../models/Enrollment");
 const coursemodel = require("../../models/Course");
 const usermodel = require("../../models/User");
 
-// ✅ Get all enrollments
+// ✅ GET: All enrollments
 router.get("/", async (req, res) => {
   try {
     const enrollments = await enrollmodel
@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Alias for all enrollments
+// ✅ GET: Alias for all enrollments
 router.get("/enrollments", async (req, res) => {
   try {
     const enrollments = await enrollmodel
@@ -32,7 +32,7 @@ router.get("/enrollments", async (req, res) => {
   }
 });
 
-// ✅ Get enrollments by student (query param)
+// ✅ GET: Enrollments by student (query param)
 router.get("/enrollmentbystudent", async (req, res) => {
   try {
     const enrollments = await enrollmodel
@@ -44,7 +44,7 @@ router.get("/enrollmentbystudent", async (req, res) => {
   }
 });
 
-// ✅ Get enrollments by student (route param) — FIXED with safe populate
+// ✅ GET: Enrollments by student ID (route param)
 router.get("/enrollmentbystudentid/:id", async (req, res) => {
   try {
     const enrollments = await enrollmodel
@@ -52,20 +52,17 @@ router.get("/enrollmentbystudentid/:id", async (req, res) => {
       .populate({
         path: "course",
         select: "courseName courseDescription",
-        strictPopulate: false // Prevent crash if ref is broken
+        strictPopulate: false
       });
 
-    // Filter out any enrollments with missing course refs
     const filtered = enrollments.filter((e) => e.course !== null);
-
     res.status(200).json(filtered);
   } catch (err) {
-    console.error("Error fetching enrollments by student ID:", err);
     res.status(500).json({ error: "Fetch by student ID failed", details: err.message });
   }
 });
 
-// ✅ Check if a student is enrolled in a course
+// ✅ GET: Check if student is enrolled in a course
 router.get("/checkenrollment", async (req, res) => {
   try {
     const { id, courseid } = req.query;
@@ -74,18 +71,14 @@ router.get("/checkenrollment", async (req, res) => {
       return res.status(400).json({ error: "Invalid student or course ID" });
     }
 
-    const record = await enrollmodel.findOne({
-      student: id,
-      course: courseid
-    });
-
+    const record = await enrollmodel.findOne({ student: id, course: courseid });
     res.status(200).json(record);
   } catch (err) {
     res.status(500).json({ error: "Enrollment check failed", details: err.message });
   }
 });
 
-// ✅ Enroll using email and course name
+// ✅ POST: Enroll using email and course name
 router.post("/enroll/add", async (req, res) => {
   try {
     const { student, course } = req.body;
@@ -108,7 +101,7 @@ router.post("/enroll/add", async (req, res) => {
   }
 });
 
-// ✅ Enroll using IDs directly
+// ✅ POST: Enroll using IDs
 router.post("/enrollbystudent/add", async (req, res) => {
   try {
     const { student, course } = req.body;
@@ -122,12 +115,18 @@ router.post("/enrollbystudent/add", async (req, res) => {
   }
 });
 
-// ✅ Delete enrollment by ID
-router.delete("/enrollment", async (req, res) => {
+// ✅ DELETE: Delete enrollment using ?id=...
+router.delete("/", async (req, res) => {
   try {
-    const deleted = await enrollmodel.findOneAndDelete({ _id: req.query.id });
+    const id = req.query.id;
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid or missing enrollment ID" });
+    }
+
+    const deleted = await enrollmodel.findByIdAndDelete(id);
     if (!deleted) return res.status(404).json("Enrollment not found");
-    res.status(200).json(deleted);
+
+    res.status(200).json({ message: "Enrollment deleted", deleted });
   } catch (err) {
     res.status(500).json({ error: "Delete failed", details: err.message });
   }

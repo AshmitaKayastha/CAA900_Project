@@ -8,87 +8,58 @@ import "./admin.css";
 export default class EnrollList extends Component {
   constructor(props) {
     super(props);
-    // initialize the state with an empty todos array
-    this.state = { todos: [], search: "" };
+    this.state = {
+      todos: [],
+      search: ""
+    };
+
     this.refreshEnrollList = this.refreshEnrollList.bind(this);
+    this.updateSearch = this.updateSearch.bind(this);
   }
 
-  //for searching event in page
   updateSearch(event) {
     this.setState({ search: event.target.value.substr(0, 20) });
   }
 
-  // To retrieve the todos data from the database --> use the componentDidMount lifecycle method
   componentDidMount() {
-    //to get data from mongo link
     axios
       .get("http://localhost:5001/api/enrollment/")
-      .then(response => {
+      .then((response) => {
         this.setState({ todos: response.data });
       })
-      .catch(function(error) {
+      .catch((error) => {
         console.log(error);
       });
   }
 
   delete(id) {
-    console.log(id);
     axios
-      .delete("http://localhost:5001/enrollment?id=" + id)
-      .then(result => {
-        // this.forceUpdate()
-
+      .delete(`http://localhost:5001/api/enrollment?id=${id}`)
+      .then(() => {
         toast.success("Deleted successfully");
-        // this.props.history.push("/showenroll/")
       })
-      .catch(err => {
-        // then print response status
+      .catch(() => {
         toast.error("Course not deleted");
       });
 
-    setTimeout(
-      function() {
-        window.location.reload();
-      }.bind(this),
-      1300
-    );
+    setTimeout(() => {
+      window.location.reload();
+    }, 1300);
   }
 
-  refreshEnrollList = res => this.setState({ todos: res.data.todos });
+  refreshEnrollList(res) {
+    this.setState({ todos: res.data.todos });
+  }
+
   render() {
-    const divStyle = {
-      display: "contents"
-    };
-    // var message='You selected '+this.state.todos._id
-    const Todo = props => (
-      <div style={divStyle}>
-        <tr>
-          <td>{props.todo.student.email}</td>
-          <td>{props.todo.course.courseName}</td>
-          <td>
-            {/* <Link to={"users/edit/"+props.todo._id}>Edit</Link> */}
-            {/* <button className="button muted-button" class="btn btn-success"><Link to={"users/edit/"+props.todo._id}>Edit</Link></button> */}
-            {/* <a href={"showcourses/edit/"+props.todo._id} class="btn btn-primary btn active" role="button" aria-pressed="true">Delete</a> */}
-            {/* <link to='' refresh="true"> */}
-            <button
-              onClick={this.delete.bind(this, props.todo._id)}
-              class="btn btn-danger"
-            >
-              Delete
-            </button>
-            {/* </link> */}
-            {/* <p>{message}</p> */}
-          </td>
-        </tr>
-      </div>
-    );
-    //used in filtering the content coming from database mongo
-    let filteredusers = this.state.todos.filter(enroll => {
+    // ✅ Avoid crash by checking course & student first
+    const filteredUsers = this.state.todos.filter((enroll) => {
       return (
-        enroll.student.email.indexOf(this.state.search) !== -1 ||
-        enroll.course.courseName.indexOf(this.state.search) !== -1
+        enroll?.student?.email?.toLowerCase().includes(this.state.search.toLowerCase()) ||
+        enroll?.course?.courseName?.toLowerCase().includes(this.state.search.toLowerCase())
       );
     });
+
     return (
       <div>
         <NavBar />
@@ -108,8 +79,8 @@ export default class EnrollList extends Component {
             aria-pressed="true"
           >
             Create Enrollment
-          </a>{" "}
-          <br />
+          </a>
+
           <h1
             style={{
               marginLeft: "-200px",
@@ -119,13 +90,14 @@ export default class EnrollList extends Component {
           >
             Enrollment List
           </h1>
+
           <input
             type="text"
             placeholder="Search..."
-            class="form-control input-sm"
+            className="form-control input-sm"
             style={{ width: "250px" }}
             value={this.state.search}
-            onChange={this.updateSearch.bind(this)}
+            onChange={this.updateSearch}
           />
         </div>
 
@@ -133,7 +105,7 @@ export default class EnrollList extends Component {
           <table
             className="table table-striped"
             id="usertable"
-            ref={el => (this.el = el)}
+            ref={(el) => (this.el = el)}
             data-order='[[ 1, "asc" ]]'
             data-page-length="25"
           >
@@ -144,10 +116,23 @@ export default class EnrollList extends Component {
                 <th>Action</th>
               </tr>
             </thead>
+
             <tbody>
-              {/* displaying data coming  */}
-              {filteredusers.map(function(currentTodo, i) {
-                return <Todo todo={currentTodo} key={i} />;
+              {filteredUsers.map((enroll, i) => {
+                return enroll?.student && enroll?.course ? (
+                  <tr key={i}>
+                    <td>{enroll.student.email}</td>
+                    <td>{enroll.course.courseName}</td>
+                    <td>
+                      <button
+                        onClick={() => this.delete(enroll._id)}
+                        className="btn btn-danger"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ) : null; // skip rows with missing data
               })}
             </tbody>
           </table>

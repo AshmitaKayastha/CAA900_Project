@@ -6,6 +6,7 @@ const cors = require("cors");
 const passport = require("passport");
 const fileUpload = require("express-fileupload");
 
+
 const app = express();
 
 
@@ -55,6 +56,9 @@ app.get("/", (req, res) => res.send("🌐 API is running!"));
 
 // Mount routes
 app.use("/api/users", require("./routes/api/users"));
+const courseRoutes = require("./routes/api/course");
+app.use("/api/course", courseRoutes);    // main
+app.use("/api/courses", courseRoutes); 
 app.use("/api/course", require("./routes/api/course"));
 app.use("/api/category", require("./routes/api/category"));
 app.use("/api/enrollment", require("./routes/api/enrollRoute"));
