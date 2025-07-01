@@ -15,23 +15,24 @@ jobs:
         node-version: [18.x]
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: https://registry.npmjs.org/
 
-      - name: Clear potential proxy settings
+      - name: Clear any proxy settings
         run: |
-          npm config delete proxy
-          npm config delete https-proxy
+          npm config delete proxy || true
+          npm config delete https-proxy || true
 
-      - name: Set public npm registry (explicit)
+      - name: Set npm registry explicitly
         run: npm config set registry https://registry.npmjs.org/
 
-      - name: Cache node modules
+      - name: Cache Node.js modules
         uses: actions/cache@v3
         with:
           path: ~/.npm
@@ -45,11 +46,13 @@ jobs:
       - name: Start backend server (server.js)
         run: |
           nohup node server.js > server.log 2>&1 &
-          sleep 5
+          echo "Waiting for backend to start..."
+          sleep 10
 
       - name: Check if server is up
         run: |
-          curl --retry 5 --retry-delay 2 --retry-connrefused http://localhost:5001 || exit 1
+          echo "Checking if server is available on port 5001..."
+          curl --retry 5 --retry-delay 3 --retry-connrefused http://localhost:5001 || exit 1
 
       - name: Run tests
         run: npm test
