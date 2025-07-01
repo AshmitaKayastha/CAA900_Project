@@ -27,21 +27,14 @@ export const loginUser = userData => dispatch => {
   axios
     .post(`${API_URL}/login`, userData)
     .then(res => {
-      let token = res.data.token;
+      const { token, user } = res.data;
+      const cleanToken = token.replace(/^Bearer\s+/i, "");
 
-      // ✅ Strip "Bearer " if it's already included
-      token = token.replace(/^Bearer\s+/i, "");
+      localStorage.setItem("jwtToken", cleanToken);
+      localStorage.setItem("user", JSON.stringify(user));
 
-      // ✅ Save clean token
-      localStorage.setItem("jwtToken", token);
-
-      // ✅ Set Authorization header with proper "Bearer " prefix
-      setAuthToken(token); // setAuthToken will add "Bearer " safely
-
-      // ✅ Decode token
-      const decoded = jwt_decode(token);
-
-      // ✅ Set user in Redux
+      setAuthToken(cleanToken);
+      const decoded = jwt_decode(cleanToken);
       dispatch(setCurrentUser(decoded));
     })
     .catch(err =>
@@ -64,12 +57,8 @@ export const setCurrentUser = decoded => ({
 // ✅ LOGOUT USER
 // ===============================
 export const logoutUser = () => dispatch => {
-  // ✅ Remove token from localStorage
   localStorage.removeItem("jwtToken");
-
-  // ✅ Clear Authorization header
+  localStorage.removeItem("user");
   setAuthToken(false);
-
-  // ✅ Clear Redux user
   dispatch(setCurrentUser({}));
 };

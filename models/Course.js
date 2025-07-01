@@ -20,10 +20,13 @@ const CourseSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Category",
       required: true
+    },
+    courseImage: {
+      type: String,
+      default: "/uploads/default-course.jpg"
     }
   },
   { timestamps: { createdAt: "created_at" } }
 );
 
-// ✅ Correct export
 module.exports = mongoose.model("Course", CourseSchema);
