@@ -26,7 +26,7 @@ const UserSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ["student", "instructor", "admin"], // optional for safety
+      enum: ["student", "instructor", "admin"],
       required: true
     }
   },
@@ -35,9 +35,9 @@ const UserSchema = new Schema(
       createdAt: "created_at",
       updatedAt: "updated_at"
     },
-    collection: "users" // ensure it maps to the existing 'users' collection
+    collection: "users" // keep this to explicitly use 'users' collection
   }
 );
 
-// Register model with exact collection name: 'users'
-module.exports = mongoose.model("users", UserSchema);
+// ✅ Correct model name
+module.exports = mongoose.model("User", UserSchema);

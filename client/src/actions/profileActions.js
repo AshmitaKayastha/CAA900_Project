@@ -8,14 +8,15 @@ import {
   SET_CURRENT_USER
 } from "./types";
 
-// Set token from localStorage on axios
-const authHeader = () => ({
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("jwtToken")}`
-  }
-});
+const authHeader = () => {
+  const token = localStorage.getItem("jwtToken");
+  return {
+    headers: {
+      Authorization: token ? `Bearer ${token}` : ""
+    }
+  };
+};
 
-// Get current profile
 export const getCurrentProfile = () => dispatch => {
   dispatch(setProfileLoading());
   axios
@@ -34,7 +35,6 @@ export const getCurrentProfile = () => dispatch => {
     );
 };
 
-// Get profile by handle
 export const getProfileByHandle = handle => dispatch => {
   dispatch(setProfileLoading());
   axios
@@ -45,7 +45,7 @@ export const getProfileByHandle = handle => dispatch => {
         payload: res.data
       })
     )
-    .catch(err =>
+    .catch(() =>
       dispatch({
         type: GET_PROFILE,
         payload: null
@@ -53,7 +53,6 @@ export const getProfileByHandle = handle => dispatch => {
     );
 };
 
-// Create Profile
 export const createProfile = (profileData, history) => dispatch => {
   axios
     .post("http://localhost:5001/api/profile", profileData, authHeader())
@@ -66,7 +65,6 @@ export const createProfile = (profileData, history) => dispatch => {
     );
 };
 
-// Add experience
 export const addExperience = (expData, history) => dispatch => {
   axios
     .post("http://localhost:5001/api/profile/experience", expData, authHeader())
@@ -79,7 +77,6 @@ export const addExperience = (expData, history) => dispatch => {
     );
 };
 
-// Add education
 export const addEducation = (eduData, history) => dispatch => {
   axios
     .post("http://localhost:5001/api/profile/education", eduData, authHeader())
@@ -92,7 +89,6 @@ export const addEducation = (eduData, history) => dispatch => {
     );
 };
 
-// Delete Experience
 export const deleteExperience = id => dispatch => {
   axios
     .delete(`http://localhost:5001/api/profile/experience/${id}`, authHeader())
@@ -110,7 +106,6 @@ export const deleteExperience = id => dispatch => {
     );
 };
 
-// Delete Education
 export const deleteEducation = id => dispatch => {
   axios
     .delete(`http://localhost:5001/api/profile/education/${id}`, authHeader())
@@ -128,7 +123,6 @@ export const deleteEducation = id => dispatch => {
     );
 };
 
-// Get all profiles
 export const getProfiles = () => dispatch => {
   dispatch(setProfileLoading());
   axios
@@ -147,7 +141,6 @@ export const getProfiles = () => dispatch => {
     );
 };
 
-// Delete account & profile
 export const deleteAccount = () => dispatch => {
   if (window.confirm("Are you sure? This can NOT be undone!")) {
     axios
@@ -167,16 +160,10 @@ export const deleteAccount = () => dispatch => {
   }
 };
 
-// Profile loading
-export const setProfileLoading = () => {
-  return {
-    type: PROFILE_LOADING
-  };
-};
+export const setProfileLoading = () => ({
+  type: PROFILE_LOADING
+});
 
-// Clear profile
-export const clearCurrentProfile = () => {
-  return {
-    type: CLEAR_CURRENT_PROFILE
-  };
-};
+export const clearCurrentProfile = () => ({
+  type: CLEAR_CURRENT_PROFILE
+});

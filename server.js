@@ -63,5 +63,6 @@ app.use("/api/lecture", require("./routes/api/lecture"));
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/instructor", require("./routes/api/instructor"));
 
+
 const port = process.env.PORT || 5001;
 app.listen(port, () => console.log(`🚀 Server running on http://localhost:${port}`));
