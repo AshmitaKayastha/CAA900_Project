@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+require('dotenv').config();
 
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -66,6 +67,7 @@ app.use("/api/role", require("./routes/api/role"));
 app.use("/api/lecture", require("./routes/api/lecture"));
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/instructor", require("./routes/api/instructor"));
+app.use("/api/rag", require("./routes/api/rag"));
 
 
 const port = process.env.PORT || 5001;
