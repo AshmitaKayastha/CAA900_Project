@@ -10,8 +10,6 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test": "echo \"No tests defined\" && exit 0",
     "build": "REACT_APP_API=http://localhost:5001 react-scripts build"
-
-
   },
   "author": "Ashmita Kayastha",
   "license": "MIT",
@@ -20,7 +18,7 @@
     "body-parser": "^1.19.0",
     "concurrently": "^4.1.1",
     "cors": "^2.8.5",
-    "express": "^4.17.1",
+    "express": "^4.21.2",
     "express-fileupload": "^1.1.5",
     "gravatar": "^1.8.0",
     "jsonwebtoken": "^8.5.1",
