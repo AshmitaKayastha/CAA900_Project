@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Node.js CI & Deploy to Azure Static Web Apps
 
 on:
   push:
@@ -24,15 +24,15 @@ jobs:
           node-version: ${{ matrix.node-version }}
           registry-url: https://registry.npmjs.org/
 
-      - name: Clear any proxy settings
+      - name: Clear proxy settings
         run: |
           npm config delete proxy || true
           npm config delete https-proxy || true
 
-      - name: Set npm registry explicitly
+      - name: Set npm registry
         run: npm config set registry https://registry.npmjs.org/
 
-      - name: Cache Node.js modules
+      - name: Cache Node modules
         uses: actions/cache@v3
         with:
           path: ~/.npm
@@ -40,19 +40,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install dependencies safely
+      - name: Install dependencies (with legacy-peer-deps)
         run: npm install --legacy-peer-deps
 
-
-      - name: Start backend server (server.js)
+      - name: Start backend (server.js)
         run: |
           nohup node server.js > server.log 2>&1 &
           echo "Waiting for backend to start..."
           sleep 10
 
-      - name: Check if server is up
+      - name: Check backend server status
         run: |
-          echo "Checking if server is available on port 5001..."
+          echo "Checking if backend is up on port 5001..."
           curl --retry 5 --retry-delay 3 --retry-connrefused http://localhost:5001 || exit 1
 
       - name: Run tests
@@ -61,3 +60,21 @@ jobs:
       - name: Show server logs if tests fail
         if: failure()
         run: cat server.log
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}  # Required for PR integration
+          action: "upload"
+          app_location: "client"           # Change if frontend is elsewhere
+          api_location: ""                 # Leave blank if not using Azure Functions
+          output_location: "build"         # Change to dist if using Vite or other tool
