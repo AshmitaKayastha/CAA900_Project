@@ -23,7 +23,7 @@ const CourseSchema = new Schema(
     },
     courseImage: {
       type: String,
-      default: "/uploads/default-course.jpg"
+      default: "/uploads/elearners.jpg"
     }
   },
   { timestamps: { createdAt: "created_at" } }

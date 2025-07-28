@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import NavBar from "../components/NavBar";
 import BrandLogoSlider from "../components/BrandLogoSlider";
-import Footer from "../components/Footer";
+
 import MobileMenu from "../components/MobileMenu";
 import jwt_decode from "jwt-decode";
 
@@ -100,7 +100,7 @@ class ServicesByInstructor extends Component {
         </div>
 
         <BrandLogoSlider background="grey-bg" />
-        <Footer />
+       
         <MobileMenu />
       </div>
     );

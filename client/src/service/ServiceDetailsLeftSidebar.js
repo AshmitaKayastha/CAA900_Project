@@ -3,7 +3,7 @@ import NavBar from '../components/NavBar';
 import Sidebar from './components/Sidebar';
 import ServiceGallery from './components/ServiceGallery';
 import BrandLogoSlider from '../components/BrandLogoSlider';
-import Footer from '../components/Footer';
+
 import MobileMenu from '../components/MobileMenu';
 class ServiceDetailsLeftSidebar extends Component{
     render(){
@@ -81,8 +81,7 @@ class ServiceDetailsLeftSidebar extends Component{
                 {/* Brand logo */}
                 <BrandLogoSlider background = "grey-bg" />
 
-                {/* Footer */}
-                <Footer/>
+            
 
                 {/* Mobile Menu */}
                 <MobileMenu/>

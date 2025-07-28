@@ -261,7 +261,7 @@ class Register extends Component {
 
                 <div className="col-md-6 d-none d-md-block">
                   <img
-                    src="/assets/img/login_banner.png"
+                    src="/assets/img/onlinelearning.jpg"
                     alt="login-banner"
                     className="img-fluid"
                   />

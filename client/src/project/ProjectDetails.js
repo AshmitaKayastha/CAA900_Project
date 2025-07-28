@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar";
 import Sidebar from "../../src/service/components/Sidebar";
 import BlogPostContent from "../blog/components/BlogPostContent";
 import BrandLogoSlider from "../components/BrandLogoSlider";
-import Footer from "../components/Footer";
+
 import MobileMenu from "../components/MobileMenu";
 class Projects extends Component {
   render() {
@@ -63,8 +63,7 @@ class Projects extends Component {
         {/* Brand logo */}
         <BrandLogoSlider background="grey-bg" />
 
-        {/* Footer */}
-        <Footer />
+      
 
         {/* Mobile Menu */}
         <MobileMenu />

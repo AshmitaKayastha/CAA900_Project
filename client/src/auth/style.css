@@ -2760,7 +2760,7 @@ select.form-control-lg:not([size]):not([multiple]) {
 
 /* image varient start */
 .aut-bg-img {
-  background-image: url("../../public//assets/img/login_banner.png");
+  background-image: url("../../public//assets/img/onlinelearning.jpg");
   background-size: cover;
   background-attachment: fixed;
   background-position: center;

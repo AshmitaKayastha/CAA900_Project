@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import NavBar from '../components/NavBar';
-import Footer from '../components/Footer';
+
 import MobileMenu from '../components/MobileMenu';
 class PageNotFound extends Component{
     render(){
@@ -31,8 +31,7 @@ class PageNotFound extends Component{
 
                 {/*====================  End of 404 page content  ====================*/}
 
-                {/* Footer */}
-                <Footer/>
+              
 
                 {/* Mobile Menu */}
                 <MobileMenu/>
