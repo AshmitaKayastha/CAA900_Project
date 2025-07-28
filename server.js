@@ -48,11 +48,11 @@ require("./config/passport")(passport);
 
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection failed:", err));
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection failed:", err));
 
 
-app.get("/", (req, res) => res.send("🌐 API is running!"));
+app.get("/", (req, res) => res.send("API is running!"));
 
 // Mount routes
 app.use("/api/users", require("./routes/api/users"));
@@ -66,6 +66,9 @@ app.use("/api/role", require("./routes/api/role"));
 app.use("/api/lecture", require("./routes/api/lecture"));
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/instructor", require("./routes/api/instructor"));
+
+
+
 
 
 const port = process.env.PORT || 5001;

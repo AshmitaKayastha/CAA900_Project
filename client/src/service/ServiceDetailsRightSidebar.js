@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import NavBar from '../components/NavBar';
 import Sidebar from './components/Sidebar';
 import BrandLogoSlider from '../components/BrandLogoSlider';
-import Footer from '../components/Footer';
+
 import MobileMenu from '../components/MobileMenu';
 import ServiceGallery from './components/ServiceGallery';
 class ServiceDetailsRightSidebar extends Component{
@@ -81,8 +81,7 @@ class ServiceDetailsRightSidebar extends Component{
                 {/* Brand logo */}
                 <BrandLogoSlider background = "grey-bg" />
 
-                {/* Footer */}
-                <Footer/>
+               
 
                 {/* Mobile Menu */}
                 <MobileMenu/>

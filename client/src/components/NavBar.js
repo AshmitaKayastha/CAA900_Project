@@ -124,8 +124,8 @@ class NavBar extends Component {
     const guestLinks = (
       <>
         <li><Link className="nav-link" to="/login/student">LOGIN</Link></li>
-        <li><Link className="nav-link" to="/login/instructor">Instructor Login</Link></li>
-                <li><Link className="nav-link" to="/login/admin">Admin Login</Link></li>
+        <li><Link className="nav-link" to="/login/instructor">INSTUCTOR LOGIN</Link></li>
+                <li><Link className="nav-link" to="/login/admin">ADMIN LOGIN</Link></li>
 
       </>
     );

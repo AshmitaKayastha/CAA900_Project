@@ -51,7 +51,7 @@ export default class Forgot extends Component {
               </div>
               <div class="col-md-6 d-none d-md-block">
                 <img
-                  src="../assets/img/login_banner.png"
+                  src="../assets/img/onlinelearning.jpg"
                   alt=""
                   class="img-fluid"
                 />

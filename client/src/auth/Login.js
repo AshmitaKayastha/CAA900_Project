@@ -62,7 +62,7 @@ class Login extends Component {
                   <div className="card-body">
                     <div className="logoHead">
                       <img
-                        src="/assets/img/logo/logonew.png"
+                        src="/assets/img/onlinelearning.jpg"
                         alt="Logo"
                         height="60px"
                         width="60px"
@@ -146,7 +146,7 @@ class Login extends Component {
 
                 <div className="col-md-6 d-none d-md-block">
                   <img
-                    src="/assets/img/login_banner.png"
+                    src="/assets/img/onlinelearning.jpg"
                     alt="Login Banner"
                     className="img-fluid"
                   />

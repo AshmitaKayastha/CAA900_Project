@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import NavBar from "./NavBar";
 import Profiles from "./profiles/Profiles";
-import Footer from "./Footer";
+
 import MobileMenu from "./MobileMenu";
 class Services extends Component {
   render() {
@@ -46,8 +46,7 @@ class Services extends Component {
 
         {/* Brand logo */}
 
-        {/* Footer */}
-        <Footer />
+       
 
         {/* Mobile Menu */}
         <MobileMenu />
