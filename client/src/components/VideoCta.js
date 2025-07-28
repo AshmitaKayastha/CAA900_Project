@@ -26,9 +26,13 @@ class VideoCta extends Component {
                     Best E-learning Portal
                   </h3>
                   <p className="video-cta-content__text">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim
+                    We are a modern e-learning platform dedicated to making 
+                    quality education accessible anytime, anywhere. Our courses 
+                    are designed by industry experts and educators to help 
+                    learners gain practical skills in technology, business, 
+                    design, and more. Whether you're upskilling, reskilling, 
+                    or just exploring, we offer flexible, engaging learning that 
+                    fits your schedule and goals.
                   </p>
                   <a
                     href={`${process.env.PUBLIC_URL}/contact-us`}

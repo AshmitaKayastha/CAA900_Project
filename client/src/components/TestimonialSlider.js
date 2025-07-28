@@ -24,21 +24,21 @@ class TestimonialSlider extends Component {
         testimonialName: "Yubaraj Ghimirei",
         testimonialDesignation: "Founder",
         testimonialText:
-          "Lorem ipsum dolor sit amet, consectetur adipisi elit sed do eiusmod tempor incididu ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco"
+          "At our core, we believe learning should be accessible,engaging, and empowering. I started this platform to bridge the gap between traditional education and real-world skills. Our mission is to help you grow, adapt, and succeed—wherever you are in your learning journey."
       },
       {
         testimonialImage: "3.jpg",
         testimonialName: "Pujan Limbu",
         testimonialDesignation: "Engineer",
         testimonialText:
-          "Ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco Lorem ipsum dolor sit amet."
+          "As engineers, we’re driven by innovation and precision. Every feature we build is designed to make learning seamless, intuitive, and impactful. Behind the scenes, our team works tirelessly to ensure the platform is fast, reliable, and always evolving to meet your needs."
       },
       {
         testimonialImage: "2.jpg",
         testimonialName: "Ashmita Kayastha",
         testimonialDesignation: "CEO",
         testimonialText:
-          "consectetur adipisi elit sed do eiusmod tempor incididu ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco"
+          "Welcome to our learning community. In a world that's constantly evolving, our goal is to equip you with the knowledge and skills to stay ahead. We're committed to delivering high-quality, accessible education that empowers you to reach your full potential. Thank you for trusting us with your learning journey."
       }
     ];
 
