@@ -30,12 +30,11 @@ jobs:
           npm install --legacy-peer-deps
           CI=false npm run build
 
-
       - name: 📁 Prepare deployment package
         run: |
-          mkdir deployment
+          mkdir -p deployment/client
           cp -r server.js package.json config routes models uploads validation deployment/
-          cp -r client/build deployment/client/build
+          cp -r client/build deployment/client/
 
       - name: 📤 Upload artifact for deployment
         uses: actions/upload-artifact@v4
@@ -69,4 +68,3 @@ jobs:
           app-name: 'elearners'
           slot-name: 'Production'
           package: ./node-app
-
