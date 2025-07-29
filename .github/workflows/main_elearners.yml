@@ -35,7 +35,7 @@ jobs:
         run: |
           mkdir -p deployment/client
           cp -r server.js package.json config routes models uploads validation deployment/
-          cp -r client/build deployment/client/
+          cp -r client/build/* deployment/client/
           cd deployment
           zip -r ../deployment.zip .
           cd ..

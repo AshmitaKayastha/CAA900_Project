@@ -64,16 +64,14 @@ app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/instructor", require("./routes/api/instructor"));
 
 // =======================
-// 🚀 Serve React Frontend
+// 🚀 Serve React Frontend (for production)
 // =======================
-
-const clientBuildPath = path.join(__dirname, "client", "build");
-app.use(express.static(clientBuildPath));
+const clientPath = path.join(__dirname, "client");
+app.use(express.static(clientPath));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(clientBuildPath, "index.html"));
+  res.sendFile(path.join(clientPath, "index.html"));
 });
-
 
 // =======================
 // 🔊 Start Server
