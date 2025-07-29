@@ -73,4 +73,3 @@ jobs:
           app-name: 'elearners'
           slot-name: 'Production'
           package: deployment.zip
-          startup-command: 'node server.js'
