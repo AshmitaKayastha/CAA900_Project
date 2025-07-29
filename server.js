@@ -67,14 +67,13 @@ app.use("/api/instructor", require("./routes/api/instructor"));
 // 🚀 Serve React Frontend
 // =======================
 
-if (process.env.NODE_ENV === "production") {
-  const clientBuildPath = path.join(__dirname, "client", "build");
-  app.use(express.static(clientBuildPath));
+const clientBuildPath = path.join(__dirname, "client", "build");
+app.use(express.static(clientBuildPath));
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(clientBuildPath, "index.html"));
-  });
-}
+app.get("*", (req, res) => {
+  res.sendFile(path.join(clientBuildPath, "index.html"));
+});
+
 
 // =======================
 // 🔊 Start Server
