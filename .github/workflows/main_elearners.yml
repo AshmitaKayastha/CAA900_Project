@@ -28,6 +28,11 @@ jobs:
           npm install --legacy-peer-deps
           CI=false npm run build
 
+      - name: 📁 Move React build to backend
+        run: |
+          rm -rf build
+          mv client/build ./build
+
       - name: 🔧 Prepare deployment package
         run: |
           mkdir deploy-folder

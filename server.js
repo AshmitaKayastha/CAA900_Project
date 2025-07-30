@@ -4,14 +4,14 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const passport = require("passport");
 const fileUpload = require("express-fileupload");
-require("dotenv").config(); // Optional: for .env support
+require("dotenv").config();
 
 const app = express();
 
 // =======================
 // 🔗 MongoDB Connection
 // =======================
-const db = process.env.MONGO_URI || require("./config/keys").mongoURI;
+const db = process.env.MONGO_URI || process.env.mongoURI || require("./config/keys").mongoURI;
 
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -19,7 +19,7 @@ mongoose
   .catch((err) => console.error("❌ MongoDB connection failed:", err));
 
 // =======================
-// 🌐 CORS (allow frontend)
+// 🌐 CORS
 // =======================
 const allowedOrigins = [
   "http://localhost:3000",
@@ -40,11 +40,17 @@ app.use(
   })
 );
 
+// =======================
+// 📦 Middleware
+// =======================
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 } }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// =======================
+// 🔐 Passport Auth
+// =======================
 app.use(passport.initialize());
 require("./config/passport")(passport);
 
@@ -53,7 +59,7 @@ require("./config/passport")(passport);
 // =======================
 app.use("/api/users", require("./routes/api/users"));
 app.use("/api/course", require("./routes/api/course"));
-app.use("/api/courses", require("./routes/api/course")); // optional duplicate
+app.use("/api/courses", require("./routes/api/course"));
 app.use("/api/category", require("./routes/api/category"));
 app.use("/api/enrollment", require("./routes/api/enrollRoute"));
 app.use("/api/role", require("./routes/api/role"));
@@ -62,11 +68,15 @@ app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/instructor", require("./routes/api/instructor"));
 
 // =======================
-// ✅ Serve React Frontend from /build (corrected path)
+// ✅ Serve React Frontend
 // =======================
-const buildPath = path.join(__dirname, "build"); // Not client/build
+const buildPath = path.join(__dirname, "build");
 app.use(express.static(buildPath));
 
+// ✅ Health Check (optional for Azure)
+app.get("/health", (req, res) => res.send("OK"));
+
+// ✅ Catch-all to serve React app
 app.get("*", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));
 });
