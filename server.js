@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const passport = require("passport");
 const fileUpload = require("express-fileupload");
-require("dotenv").config(); // Optional: for .env support
+require("dotenv").config(); // for .env support
 
 const app = express();
 
@@ -15,8 +15,8 @@ const db = process.env.MONGO_URI || require("./config/keys").mongoURI;
 
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection failed:", err));
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection failed:", err));
 
 // =======================
 // 🌐 CORS (allow frontend)
@@ -24,8 +24,7 @@ mongoose
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
-  "https://elearners-g3gshfgvbhetg0fp.canadacentral-01.azurewebsites.net",
-   // ✅ Your Azure App Service domain
+  "https://elearners-g3gshfgvbhetg0fp.canadacentral-01.azurewebsites.net", // Azure domain
 ];
 
 app.use(
@@ -41,6 +40,9 @@ app.use(
   })
 );
 
+// =======================
+// 📦 Middleware
+// =======================
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 } }));
@@ -49,7 +51,9 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(passport.initialize());
 require("./config/passport")(passport);
 
-
+// =======================
+// 🧭 API Routes
+// =======================
 app.use("/api/users", require("./routes/api/users"));
 app.use("/api/course", require("./routes/api/course"));
 app.use("/api/courses", require("./routes/api/course")); // optional duplicate
@@ -61,9 +65,9 @@ app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/instructor", require("./routes/api/instructor"));
 
 // =======================
-// ✅ Serve React frontend (Production)
+// ✅ Serve React Frontend (Production)
 // =======================
-const buildPath = path.join(__dirname, "client", "build");
+const buildPath = path.join(__dirname, "build"); // ⬅️ fixed: points to /build directly
 app.use(express.static(buildPath));
 
 app.get("*", (req, res) => {
