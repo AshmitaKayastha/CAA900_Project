@@ -53,6 +53,17 @@ app.use(passport.initialize());
 require("./config/passport")(passport);
 
 // =======================
+// 🏥 Health Check Endpoint
+// =======================
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV 
+  });
+});
+
+// =======================
 // 🔗 API Routes
 // =======================
 app.use("/api/users", require("./routes/api/users"));
@@ -78,5 +89,5 @@ app.get("*", (req, res) => {
 // =======================
 // 🔊 Start Server
 // =======================
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

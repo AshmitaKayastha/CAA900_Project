@@ -5,12 +5,14 @@ console.log('🚀 Starting e-learning application...');
 
 // Set environment variables
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
-process.env.PORT = process.env.PORT || 5001;
+// Azure App Service provides PORT environment variable
+process.env.PORT = process.env.PORT || 8080;
 
 // Start the server
 const server = spawn('node', ['server.js'], {
   stdio: 'inherit',
-  env: process.env
+  env: process.env,
+  cwd: __dirname
 });
 
 server.on('error', (error) => {
