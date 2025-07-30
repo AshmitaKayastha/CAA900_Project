@@ -23,19 +23,17 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: ⚛️ Build React frontend
+        working-directory: client
         run: |
-          cd client
           npm install --legacy-peer-deps
           CI=false npm run build
-          cd ..
-      - name: 🔧 Move frontend build to backend
-        run: |
-          rm -rf client/node_modules
-          mv client/build ./build
 
-      - name: 📦 Zip entire app for deployment
+      - name: 🔧 Prepare deployment package
         run: |
-          zip -r deploy.zip . -x "*.git*" "node_modules/*" "client/*" "*.github/*"
+          mkdir deploy-folder
+          cp -r server.js package.json package-lock.json build config models routes validation uploads deploy-folder 2>/dev/null || true
+          cd deploy-folder
+          zip -r ../deploy.zip .
 
       - name: 📤 Upload artifact
         uses: actions/upload-artifact@v4
