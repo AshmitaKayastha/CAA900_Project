@@ -31,7 +31,7 @@ jobs:
           cd client
           npm install --legacy-peer-deps
           CI=false npm run build
-          # Create web.config for Azure routing
+          # Add web.config for Azure routing
           cat <<EOF > build/web.config
           <?xml version="1.0" encoding="utf-8"?>
           <configuration>
@@ -55,9 +55,9 @@ jobs:
 
       - name: 📁 Prepare deployment package
         run: |
-          mkdir -p deployment/client/build
+          mkdir -p deployment/client
           cp -r server.js package.json config routes models uploads validation deployment/
-          cp -r client/build/* deployment/client/build/
+          cp -r client/build deployment/client/
           cd deployment
           zip -r ../deployment.zip .
           cd ..
