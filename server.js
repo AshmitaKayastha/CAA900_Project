@@ -17,7 +17,7 @@ mongoose
   .catch((err) => console.error("❌ MongoDB connection failed:", err));
 
 // =======================
-// 🌐 CORS (Optional: adjust for production)
+// 🌐 CORS (for development)
 // =======================
 const allowedOrigins = [
   "http://localhost:3000",
@@ -64,13 +64,13 @@ app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/instructor", require("./routes/api/instructor"));
 
 // =======================
-// 🚀 Serve React Frontend (for production)
+// ✅ Always Serve React Frontend
 // =======================
-const clientPath = path.join(__dirname, "client");
-app.use(express.static(clientPath));
+const buildPath = path.join(__dirname, "client", "build");
+app.use(express.static(buildPath));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(clientPath, "index.html"));
+  res.sendFile(path.join(buildPath, "index.html"));
 });
 
 // =======================
