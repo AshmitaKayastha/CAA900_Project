@@ -6,14 +6,9 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: 📦 Checkout code
         uses: actions/checkout@v4
@@ -24,80 +19,50 @@ jobs:
           node-version: '20.x'
 
       - name: 📥 Install backend dependencies
-        run: |
-          npm install --legacy-peer-deps
+        run: npm install --legacy-peer-deps
 
       - name: ⚛️ Build React frontend
         run: |
           cd client
           npm install --legacy-peer-deps
           CI=false npm run build
-          
-          # Add web.config for Azure routing (important for React routing)
-          cat <<EOF > build/web.config
-          <?xml version="1.0" encoding="utf-8"?>
-          <configuration>
-            <system.webServer>
-              <rewrite>
-                <rules>
-                  <rule name="React Routes" stopProcessing="true">
-                    <match url=".*" />
-                    <conditions logicalGrouping="MatchAll">
-                      <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
-                      <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
-                    </conditions>
-                    <action type="Rewrite" url="/index.html" />
-                  </rule>
-                </rules>
-              </rewrite>
-            </system.webServer>
-          </configuration>
-          EOF
           cd ..
-
-      - name: 🗃 Copy frontend build into backend
-        run: |
-          mkdir -p client/build
-          cp -r client/build ./client_build
 
       - name: 📁 Prepare deployment package
         run: |
-          mkdir deployment
-          cp -r server.js package.json config routes models uploads validation deployment/
-          cp -r client_build deployment/client
-
-          # Optional: add process.json or ecosystem.config.js if using PM2
-          cd deployment
-          zip -r ../deployment.zip .
+          mkdir package
+          cp -r server.js package.json config routes models validation uploads package/
+          cp -r client/build package/client
+          cd package
+          zip -r ../deploy.zip .
           cd ..
 
       - name: 📤 Upload deployment artifact
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
-          path: deployment.zip
+          name: deploy-zip
+          path: deploy.zip
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
-
     steps:
       - name: 📥 Download deployment artifact
         uses: actions/download-artifact@v4
         with:
-          name: node-app
+          name: deploy-zip
           path: .
 
       - name: 🔐 Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1FBEF79ADC1F4222A479C27F1A8E0C20 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FF63ADDE36C94E9F920FA27F8411E9FA }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0B66193810DB4AD5840B1B3F59032EC1 }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: 🚀 Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'elearners'
           slot-name: 'Production'
-          package: deployment.zip
+          package: deploy.zip
