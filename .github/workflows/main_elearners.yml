@@ -31,7 +31,7 @@ jobs:
       - name: 📁 Prepare deployment package
         run: |
           mkdir package
-          cp -r server.js package.json config routes models validation uploads package/
+          cp -r server.js web.config package.json config routes models validation uploads package/
           cp -r client/build package/client
           cd package
           zip -r ../deploy.zip .
