@@ -1,0 +1,11 @@
+{
+  "name": "elearners",
+  "config": {
+    "WEBSITE_NODE_DEFAULT_VERSION": "20.x",
+    "NODE_ENV": "production",
+    "PORT": "8080",
+    "MONGO_URI": "mongodb+srv://akayastha2:Kathmandu12345@mycluster.jxvkltu.mongodb.net/?retryWrites=true&w=majority&appName=MyCluster",
+    "JWT_SECRET": "secret"
+  },
+  "startupCommand": "node startup.js"
+}

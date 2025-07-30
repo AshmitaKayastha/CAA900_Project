@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const passport = require("passport");
@@ -80,11 +81,24 @@ app.use("/api/instructor", require("./routes/api/instructor"));
 // ✅ Serve React Frontend from /build (corrected path)
 // =======================
 const buildPath = path.join(__dirname, "build"); // Not client/build
-app.use(express.static(buildPath));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(buildPath, "index.html"));
-});
+// Check if build directory exists
+if (fs.existsSync(buildPath)) {
+  app.use(express.static(buildPath));
+  
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(buildPath, "index.html"));
+  });
+} else {
+  console.warn("⚠️ Build directory not found, serving API only");
+  app.get("/", (req, res) => {
+    res.json({ 
+      message: "E-Learning API is running", 
+      status: "API only mode - frontend not built",
+      timestamp: new Date().toISOString()
+    });
+  });
+}
 
 // =======================
 // 🔊 Start Server

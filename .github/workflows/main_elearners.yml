@@ -45,10 +45,18 @@ jobs:
           cp web.config deploy-folder/
           # Copy React build files to the correct location
           cp -r client/build deploy-folder/build
-          # Copy node_modules for production
-          cp -r node_modules deploy-folder/
+          # Copy node_modules for production (only production dependencies)
+          npm ci --only=production --prefix deploy-folder
+          # Create a simple package.json for deployment
           cd deploy-folder
+          echo '{"name":"elearners","version":"1.0.0","main":"startup.js","scripts":{"start":"node startup.js"},"engines":{"node":"20.x"}}' > package.json
           zip -r ../deploy.zip .
+
+      - name: 🔍 Verify deployment package
+        run: |
+          unzip -q deploy.zip -d verify-folder
+          cd verify-folder
+          node ../deploy-verify.js
 
       - name: 📤 Upload artifact
         uses: actions/upload-artifact@v4
@@ -71,6 +79,15 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 🔧 Configure Azure App Service
+        run: |
+          az webapp config appsettings set --name elearners --resource-group elearners-rg --settings \
+            WEBSITE_NODE_DEFAULT_VERSION=20.x \
+            NODE_ENV=production \
+            PORT=8080 \
+            MONGO_URI="mongodb+srv://akayastha2:Kathmandu12345@mycluster.jxvkltu.mongodb.net/?retryWrites=true&w=majority&appName=MyCluster" \
+            JWT_SECRET=secret
 
       - name: 🚀 Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
