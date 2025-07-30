@@ -1,99 +1,73 @@
 const fs = require('fs');
 const path = require('path');
 
-console.log('🔍 Verifying deployment package structure...');
+console.log('🔍 Verifying deployment package...');
 
 const requiredFiles = [
   'server.js',
   'startup.js',
   'package.json',
   'web.config',
-  'build/index.html',
-  'node_modules/express/package.json'
+  'config/keys.js',
+  'build/index.html'
 ];
 
 const requiredDirs = [
-  'config',
   'models',
   'routes',
-  'build',
-  'node_modules'
+  'validation',
+  'uploads',
+  'build'
 ];
 
-console.log('\n📁 Checking required files:');
-let allFilesExist = true;
-requiredFiles.forEach(file => {
-  const exists = fs.existsSync(file);
-  console.log(`${exists ? '✅' : '❌'} ${file}`);
-  if (!exists) allFilesExist = false;
-});
+let allGood = true;
 
-console.log('\n📂 Checking required directories:');
-let allDirsExist = true;
-requiredDirs.forEach(dir => {
-  const exists = fs.existsSync(dir) && fs.statSync(dir).isDirectory();
-  console.log(`${exists ? '✅' : '❌'} ${dir}/`);
-  if (!exists) allDirsExist = false;
-});
+// Check required files
+for (const file of requiredFiles) {
+  if (fs.existsSync(file)) {
+    console.log(`✅ ${file} exists`);
+  } else {
+    console.log(`❌ ${file} missing`);
+    allGood = false;
+  }
+}
 
-console.log('\n📦 Checking package.json:');
+// Check required directories
+for (const dir of requiredDirs) {
+  if (fs.existsSync(dir) && fs.statSync(dir).isDirectory()) {
+    console.log(`✅ ${dir}/ directory exists`);
+  } else {
+    console.log(`❌ ${dir}/ directory missing`);
+    allGood = false;
+  }
+}
+
+// Check node_modules
+if (fs.existsSync('node_modules')) {
+  console.log('✅ node_modules exists');
+} else {
+  console.log('❌ node_modules missing');
+  allGood = false;
+}
+
+// Check package.json
 try {
   const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-  console.log(`✅ Package name: ${packageJson.name}`);
-  console.log(`✅ Main entry: ${packageJson.main}`);
-  console.log(`✅ Start script: ${packageJson.scripts.start}`);
-} catch (error) {
-  console.log('❌ Error reading package.json:', error.message);
-}
-
-console.log('\n🌐 Checking web.config:');
-try {
-  const webConfig = fs.readFileSync('web.config', 'utf8');
-  if (webConfig.includes('startup.js')) {
-    console.log('✅ web.config points to startup.js');
+  if (packageJson.scripts && packageJson.scripts.start) {
+    console.log('✅ package.json has start script');
   } else {
-    console.log('❌ web.config should point to startup.js');
+    console.log('❌ package.json missing start script');
+    allGood = false;
   }
 } catch (error) {
-  console.log('❌ Error reading web.config:', error.message);
+  console.log('❌ Invalid package.json');
+  allGood = false;
 }
 
-console.log('\n📊 Summary:');
-if (allFilesExist && allDirsExist) {
-  console.log('✅ All required files and directories exist');
-  console.log('🚀 Package should be ready for deployment');
+if (allGood) {
+  console.log('🎉 Deployment package verification passed!');
+  process.exit(0);
 } else {
-  console.log('❌ Some required files or directories are missing');
-  console.log('⚠️  Please check the missing items above');
-}
-
-// Check file sizes
-console.log('\n📏 Package size analysis:');
-const getDirSize = (dir) => {
-  let size = 0;
-  if (fs.existsSync(dir)) {
-    const files = fs.readdirSync(dir);
-    files.forEach(file => {
-      const filePath = path.join(dir, file);
-      const stat = fs.statSync(filePath);
-      if (stat.isDirectory()) {
-        size += getDirSize(filePath);
-      } else {
-        size += stat.size;
-      }
-    });
-  }
-  return size;
-};
-
-const buildSize = getDirSize('build');
-const nodeModulesSize = getDirSize('node_modules');
-const totalSize = buildSize + nodeModulesSize;
-
-console.log(`📁 build/ directory: ${(buildSize / 1024 / 1024).toFixed(2)} MB`);
-console.log(`📦 node_modules/ directory: ${(nodeModulesSize / 1024 / 1024).toFixed(2)} MB`);
-console.log(`📊 Total estimated size: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
-
-if (totalSize > 500 * 1024 * 1024) { // 500MB limit
-  console.log('⚠️  Package size is large, consider optimizing');
+  console.log('💥 Deployment package verification failed!');
+  process.exit(1);
 }
