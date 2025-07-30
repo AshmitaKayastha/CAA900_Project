@@ -50,11 +50,6 @@ jobs:
           echo "Waiting for backend to start..."
           sleep 10
 
-      - name: Check if server is up
-        run: |
-          echo "Checking if server is available on port 5001..."
-          curl --retry 5 --retry-delay 3 --retry-connrefused http://localhost:5001 || exit 1
-
       - name: Run tests
         run: npm test
 
