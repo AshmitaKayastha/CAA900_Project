@@ -4,13 +4,15 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const passport = require("passport");
 const fileUpload = require("express-fileupload");
+require("dotenv").config(); // Optional: for .env support
 
 const app = express();
 
 // =======================
 // 🔗 MongoDB Connection
 // =======================
-const db = require("./config/keys").mongoURI;
+const db = process.env.MONGO_URI || require("./config/keys").mongoURI;
+
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("✅ MongoDB connected"))
@@ -22,8 +24,9 @@ mongoose
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
-  "https://elearners.azurewebsites.net", // ✅ Add your production domain
+  "https://elearners-g3gshfgvbhetg0fp.canadacentral-01.azurewebsites.net", // ✅ Your Azure App Service domain
 ];
+
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -53,7 +56,7 @@ require("./config/passport")(passport);
 // =======================
 app.use("/api/users", require("./routes/api/users"));
 app.use("/api/course", require("./routes/api/course"));
-app.use("/api/courses", require("./routes/api/course"));
+app.use("/api/courses", require("./routes/api/course")); // optional duplicate
 app.use("/api/category", require("./routes/api/category"));
 app.use("/api/enrollment", require("./routes/api/enrollRoute"));
 app.use("/api/role", require("./routes/api/role"));
@@ -62,7 +65,7 @@ app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/instructor", require("./routes/api/instructor"));
 
 // =======================
-// ✅ Serve React frontend
+// ✅ Serve React frontend (Production)
 // =======================
 const buildPath = path.join(__dirname, "client", "build");
 app.use(express.static(buildPath));
