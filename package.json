@@ -9,7 +9,7 @@
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test": "echo \"No tests defined\" && exit 0",
-    "build": "REACT_APP_API=http://localhost:5001 react-scripts build",
+    "build": "NODE_ENV=production react-scripts build",
     "heroku-postbuild": "cd client && npm install && npm run build",
     "azure-start": "node startup.js"
   },

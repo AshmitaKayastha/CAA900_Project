@@ -25,14 +25,18 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
   "https://elearners-g3gshfgvbhetg0fp.canadacentral-01.azurewebsites.net",
+  "https://elearners-g3gshfgvbhetgefp.canadacentral-01.azurewebsites.net", // Alternative domain
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
+      console.log("🌐 CORS check for origin:", origin);
       if (!origin || allowedOrigins.includes(origin)) {
+        console.log("✅ CORS allowed for:", origin);
         callback(null, true);
       } else {
+        console.log("❌ CORS blocked for:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },

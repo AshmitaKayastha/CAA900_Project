@@ -24,9 +24,15 @@ jobs:
 
       - name: ⚛️ Build React frontend
         working-directory: client
+        env:
+          NODE_ENV: production
         run: |
           npm install --legacy-peer-deps
           CI=false npm run build
+
+      - name: 🔧 Fix hardcoded URLs
+        run: |
+          node scripts/fix-urls.js
 
       - name: 🔧 Prepare deployment package
         run: |
