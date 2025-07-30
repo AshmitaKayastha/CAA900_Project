@@ -24,14 +24,16 @@ jobs:
           node-version: '20.x'
 
       - name: 📥 Install backend dependencies
-        run: npm install --legacy-peer-deps
+        run: |
+          npm install --legacy-peer-deps
 
       - name: ⚛️ Build React frontend
         run: |
           cd client
           npm install --legacy-peer-deps
           CI=false npm run build
-          # Add web.config for Azure routing
+          
+          # Add web.config for Azure routing (important for React routing)
           cat <<EOF > build/web.config
           <?xml version="1.0" encoding="utf-8"?>
           <configuration>
@@ -53,11 +55,18 @@ jobs:
           EOF
           cd ..
 
+      - name: 🗃 Copy frontend build into backend
+        run: |
+          mkdir -p client/build
+          cp -r client/build ./client_build
+
       - name: 📁 Prepare deployment package
         run: |
-          mkdir -p deployment/client
+          mkdir deployment
           cp -r server.js package.json config routes models uploads validation deployment/
-          cp -r client/build deployment/client/
+          cp -r client_build deployment/client
+
+          # Optional: add process.json or ecosystem.config.js if using PM2
           cd deployment
           zip -r ../deployment.zip .
           cd ..
