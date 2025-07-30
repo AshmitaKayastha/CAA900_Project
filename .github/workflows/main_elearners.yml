@@ -45,8 +45,8 @@ jobs:
           cp web.config deploy-folder/
           # Copy React build files to the correct location
           cp -r client/build deploy-folder/build
-          # Copy node_modules for production (only production dependencies)
-          npm ci --only=production --prefix deploy-folder
+          # Install production dependencies (using npm install since no package-lock.json exists)
+          npm install --only=production --prefix deploy-folder
           # Create a simple package.json for deployment
           cd deploy-folder
           echo '{"name":"elearners","version":"1.0.0","main":"startup.js","scripts":{"start":"node startup.js"},"engines":{"node":"20.x"}}' > package.json
