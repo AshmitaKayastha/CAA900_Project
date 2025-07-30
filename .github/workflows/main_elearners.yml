@@ -39,6 +39,8 @@ jobs:
           cp web.config deploy-folder/
           # Copy React build files to the correct location
           cp -r client/build deploy-folder/build
+          # Copy node_modules for production
+          cp -r node_modules deploy-folder/
           cd deploy-folder
           zip -r ../deploy.zip .
 
@@ -69,3 +71,4 @@ jobs:
         with:
           app-name: 'elearners'
           package: deploy.zip
+          slot-name: 'production'
