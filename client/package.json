@@ -78,11 +78,12 @@
     "eslint": "^8.56.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-loader": "^4.0.2",
-    "style-loader": "^0.23.1"
+    "style-loader": "^0.23.1",
+    "cross-env": "^7.0.3"
   },
   "scripts": {
-    "start": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
-    "build": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts build",
+    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
