@@ -25,6 +25,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
   "https://elearners-g3gshfgvbhetg0fp.canadacentral-01.azurewebsites.net",
+  "https://elearn-app1234.azurewebsites.net"
 ];
 
 app.use(
@@ -70,15 +71,15 @@ app.use("/api/instructor", require("./routes/api/instructor"));
 // =======================
 // ✅ Serve React Frontend
 // =======================
-const buildPath = path.join(__dirname, "build");
-app.use(express.static(buildPath));
+const clientBuildPath = path.join(__dirname, "client", "build");
+app.use(express.static(clientBuildPath));
 
-// ✅ Health Check (optional for Azure)
+// ✅ Health Check
 app.get("/health", (req, res) => res.send("OK"));
 
-// ✅ Catch-all to serve React app
+// ✅ React Catch-all
 app.get("*", (req, res) => {
-  res.sendFile(path.join(buildPath, "index.html"));
+  res.sendFile(path.join(clientBuildPath, "index.html"));
 });
 
 // =======================
