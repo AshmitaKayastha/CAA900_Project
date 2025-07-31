@@ -16,6 +16,7 @@
     "case-sensitive-paths-webpack-plugin": "2.2.0",
     "classnames": "^2.2.6",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "6.2.0",
     "dotenv-expand": "4.2.0",
     "express-fileupload": "^1.1.5",
@@ -78,8 +79,7 @@
     "eslint": "^7.32.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-loader": "^4.0.2",
-    "style-loader": "^0.23.1",
-    "cross-env": "^7.0.3"
+    "style-loader": "^0.23.1"
   },
   "scripts": {
     "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts start",

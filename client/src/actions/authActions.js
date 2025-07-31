@@ -2,8 +2,9 @@ import axios from "axios";
 import setAuthToken from "../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
 import { GET_ERRORS, SET_CURRENT_USER } from "./types";
+import { API_BASE_URL } from "../config/config";
 
-const API_URL = "http://localhost:5001/api/users";
+const API_URL = `${API_BASE_URL}/users`;
 
 // ===============================
 // ✅ REGISTER USER
